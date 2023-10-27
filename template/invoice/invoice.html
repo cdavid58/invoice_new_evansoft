@@ -1,0 +1,163 @@
+{% extends '../base.html' %}
+{% load static %}
+{% block content %}
+<div class="card mb-3">
+  <div class="card-body">
+    <div class="row justify-content-between align-items-center">
+      <div class="col-md">
+        <h5 class="mb-2 mb-md-0">N° # {{invoice.consecutive}}</h5>
+      </div>
+      <div class="col-auto">
+        <a href="https://catalogo-vpfe.dian.gov.co/document/searchqr?documentkey={{invoice.cufe}}" target="_blank" class="btn btn-falcon-default btn-sm me-1 mb-2 mb-sm-0" type="button" id="downloadPdfButton">
+          <span class="fas fa-arrow-down me-1"> </span>Download (.pdf)
+        </a>
+        <button class="btn btn-falcon-default btn-sm me-1 mb-2 mb-sm-0 print_invoice" type="button"><span class="fas fa-print me-1"> </span></button>
+        <!-- <button class="btn btn-falcon-success btn-sm mb-2 mb-sm-0" type="button"><span class="fas fa-dollar-sign me-1"></span>Receive Payment</button> -->
+      </div>
+    </div>
+  </div>
+</div>
+<div class="card mb-3">
+  <div class="card-body">
+    <div class="row align-items-center text-center mb-3">
+      <div class="col-sm-6 text-sm-start"><img src="{{company.logo}}" alt="invoice" width="150" /></div>
+      <div class="col text-sm-end mt-3 mt-sm-0">
+        <h2 class="mb-3">Factura</h2>
+        <h5>{{company.name|title}}</h5>
+        <p class="fs--1 mb-0">
+          Dirección: {{company.address}}<br>
+          E-mail: {{company.email}}<br>
+          Teléfono: {{company.phone}}
+        </p>
+      </div>
+      <div class="col-12">
+        <hr />
+      </div>
+    </div>
+    <div class="row align-items-center">
+      <div class="col">
+        <h6 class="text-500">Facturar a</h6>
+        <h5>{{client.name}}</h5>
+        <p class="fs--1">{{client.address}}</p>
+        <p class="fs--1"><a href="mailto:{{client.email}}">{{client.email}}</a><br /><a href="tel:{{client.phone}}">{{client.phone}}</a></p>
+      </div>
+      <div class="col-sm-auto ms-auto">
+        <div class="table-responsive">
+          <table class="table table-sm table-borderless fs--1">
+            <tbody>
+              <tr>
+                <th class="text-sm-end">Factura No:</th>
+                <td>{{invoice.consecutive}}</td>
+              </tr>
+              <tr>
+                <th class="text-sm-end">Metodo de pago:</th>
+                <td>{{paymentmethodinvoice.paymentform}}</td>
+              </tr>
+              <tr>
+                <th class="text-sm-end">Fecha Factura:</th>
+                <td>{{invoice.date}}</td>
+              </tr>
+              <tr>
+                <th class="text-sm-end">Fecha de pago:</th>
+                <td>{{paymentmethodinvoice.due_date}}</td>
+              </tr>
+              <tr class="alert-success fw-bold">
+                <th class="text-sm-end">Monto adeudado:</th>
+                <td>${{totals.totals}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="table-responsive scrollbar mt-4 fs--1">
+      <table class="table table-striped border-bottom">
+        <thead class="light">
+          <tr class="bg-primary text-white dark__bg-1000">
+            <th class="border-0">Producto</th>
+            <th class="border-0 text-center">Cantidad</th>
+            <th class="border-0 text-end">Base</th>
+            <th class="border-0 text-end">IVA</th>
+            <th class="border-0 text-end">ICO</th>
+            <th class="border-0 text-end">DESCUENTO</th>
+            <th class="border-0 text-end">SUBTOTAL</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for i in details %}
+            <tr>
+              <td class="align-middle">
+                <h6 class="mb-0 text-nowrap">{{i.product}}</h6>
+              </td>
+              <td class="align-middle text-center">{{i.quantity}}</td>
+              <td class="align-middle text-end">${{i.price|floatformat:2}}</td>
+              <td class="align-middle text-end">${{i.tax|floatformat:2}}</td>
+              <td class="align-middle text-end">${{i.ipo|floatformat:2}}</td>
+              <td class="align-middle text-end">${{i.discount|floatformat:2}}</td>
+              <td class="align-middle text-end">${{i.subtotal|floatformat:2}}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="row justify-content-end">
+      <div class="col-auto">
+        <table class="table table-sm table-borderless fs--1 text-end">
+          <tr>
+            <th class="text-900">Subtotal:</th>
+            <td class="fw-semi-bold">${{totals.subtotals}} </td>
+          </tr>
+          <tr>
+            <th class="text-900">Impuestos:</th>
+            <td class="fw-semi-bold">${{totals.tax}}</td>
+          </tr>
+          <tr>
+            <th class="text-900">ICO:</th>
+            <td class="fw-semi-bold">${{totals.ipo}}</td>
+          </tr>
+          <tr>
+            <th class="text-900">Descuento:</th>
+            <td class="fw-semi-bold">${{totals.discount}}</td>
+          </tr>
+          <tr class="border-top">
+            <th class="text-900">Total:</th>
+            <td class="fw-semi-bold">${{totals.totals}}</td>
+          </tr>
+          <!-- <tr class="border-top border-top-2 fw-bolder text-900">
+            <th>Amount Due:</th>
+            <td>$19688.40</td>
+          </tr> -->
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="card-footer bg-light">
+    <!-- <p class="fs--1 mb-0"><strong>Notes: </strong>We really appreciate your business and if there’s anything else we can do, please let us know!</p> -->
+    <p class="fs--1 mb-0"><strong>CUFE: </strong>{{invoice.cufe}}</p>
+  </div>
+</div>
+{% endblock %}
+{% block script %}
+
+  <script>
+    $(document).ready(function(){
+      
+      $(".print_invoice").click(function(){
+        let params = "scrollbars=no,resizable=no,status=no,location=no,toolbar=no,menubar=no,width=800,height=600,left=100,top=100";
+        window.open("{% url 'Print_Invoice' invoice.pk_invoice %}", "invoice", params);
+      });
+
+
+
+
+
+
+
+
+
+
+    });
+  </script>
+
+
+{% endblock %}

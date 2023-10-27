@@ -1,0 +1,210 @@
+{% extends '../base.html' %}
+{% load static %}
+{% block content %}
+
+<form enctype="multipart/form-data" class="update_inventory_excel">
+  <input type="file" class="data_inventory" accept=".xls, .xlsx" hidden>
+</form>
+
+
+<div class="card mb-3" data-date="{{ i.registration_date }}">
+  <div class="card-body p-2 overflow-hidden">
+    <div class="row">
+      <div class="col-md-3 mb-3 col-12">
+        <h4>Lista de Producto</h4>
+      </div>
+      <div class="col-md-7 col-12 ml-auto">
+        {% for i in request.session.permission %}
+          {% if i == "Todos" %}
+            <button class="btn btn-success col-md-3 col-sm-4 col-12 mb-3 upload_excel_inventory">Cargar Excel</button>
+          {% endif %}
+          {% if i == "Creador" or i == "Todos" %}
+            <a dowload href="{% static 'inventory_pattern.xlsx' %}" href="javascript:void(0);" class="btn btn-info col-md-4 col-12 mb-3">Descargar Patrón</a>
+            <button class="btn btn-primary add_product col-md-4 col-12 mb-3">Crear Producto</button>
+          {% endif %}
+        {% endfor %}   
+      </div>
+    </div>
+  </div>
+</div>
+<input type="text" id="searchInput" placeholder="Buscar producto..."  autofocus class="form-control form-control-sm mb-2 searchInput">
+
+<div class="card" data-date="{{ i.registration_date }}">
+  <div class="card-body p-2 overflow-hidden">
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th class="text-dark fs-0">Código</th>
+            <th class="text-dark">Articulo</th>
+            <th class="text-dark">Cantidad</th>
+            <th class="text-dark">Precio</th>
+            <th class="text-dark">IVA</th>
+            <th class="text-dark">IPO</th>
+            {% if request.session.permission %}
+              {% for j in request.session.permission %}
+                {% if j == "Editor" or j == "Todos" or j == "Eliminador"%}
+                  <th class="text-dark">Acciones</th>
+                {% endif %}
+              {% endfor %}
+            {% endif %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for i in page_obj %}
+            <tr>
+              <td class="name{{i.pk_user}} code">{{i.code}}</td>
+              <td class="product">{{i.name}}</td>
+              <td>{{i.quantity}}</td>
+              <td>${{i.price_1}}</td>
+              <td>{{i.tax}}%</td>
+              <td>${{i.ipo}}</td>
+              <td>
+                {% for j in request.session.permission %}
+                  {% if j == "Editor" or j == "Todos" %}
+                    <a href="{% url 'Edit_Product' i.code %}" class="btn btn-primary edit" id="{{i.code}}">Editar</a>
+                  {% endif %}
+                  {% if j == "Eliminador" or j == "Todos" %}
+                    <button class="btn btn-danger delete" id="{{i.code}}">Eliminar</button>
+                  {% endif %}
+                {% endfor %}              
+              </td>            
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+{% if page_obj.has_other_pages %}
+  <div class="card-footer border-top d-flex justify-content-center">
+      {% if page_obj.has_previous %}
+        <a class="btn btn-falcon-default btn-sm me-2" href="?page=1" data-bs-toggle="tooltip" data-bs-placement="top" title="First">
+            <span class="fas fa-chevron-left"></span>
+        </a>
+      {% endif %}
+      {% for num in page_range %}
+        {% if page_obj.number == num %}
+          <a class="btn btn-sm btn-falcon-default me-2 active">{{ num }}</a>
+        {% else %}
+          <a class="btn btn-sm btn-falcon-default me-2" href="?page={{ num }}">{{ num }}</a>
+        {% endif %}
+      {% endfor %}
+      {% if page_obj.has_next %}
+        <a class="btn btn-falcon-default btn-sm" href="?page={{ page_obj.paginator.num_pages }}" data-bs-toggle="tooltip" data-bs-placement="top" title="Last">
+            <span class="fas fa-chevron-right"></span>
+        </a>
+      {% endif %}
+  </div>
+{% endif %}
+
+<button class="btn btn-primary question_excel_inventory" type="button" data-bs-toggle="modal" hidden data-bs-target="#invent_excel">Launch demo modal</button>
+<div class="modal fade" id="invent_excel" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document" style="max-width:800px">
+    <div class="modal-content position-relative">
+      <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
+        <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-0">
+        <div class="rounded-top-lg py-3 ps-4 pe-6 bg-light">
+          <h4 class="mb-1" id="modalExampleDemoLabel">
+            ¿Desea continuar con la importación del inventario?. <br><br>Cualquier inventario existente en su cuenta será reemplazado por el contenido de este documento.
+          </h4>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary close_inventory" type="button" data-bs-dismiss="modal">Cerrar</button>
+        <button class="btn btn-primary update_inventory" type="button">Continuar </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+{% endblock %}
+{% block script %}
+  <script>
+    $(document).ready(function(){
+      $(".searchInput").on("input", function() {
+        var searchText = $(this).val().toLowerCase();
+        $("table tbody tr").each(function() {
+          var ccNitText = $(this).find(".code").text().toLowerCase();
+          var razonSocialText = $(this).find(".product").text().toLowerCase();
+          if (ccNitText.includes(searchText) || razonSocialText.includes(searchText) ) {
+            $(this).show();
+          } else {
+            $(this).hide();
+          }
+        });
+      });
+      $('.add_product').click(function(){
+        location.href = "{% url 'Create_Product' %}"
+      })
+      $(document).on('click','.edit',function(){
+        id = this.id
+        location.href = '{{request.session.url}}/inventory/Edit_Product/'+id
+      })
+      $(document).on('click','.delete',function(){
+        $(this).closest('tr').remove();
+        id = this.id
+        $.ajax({
+          url:"{% url 'Delete_Product' %}",
+          data:{'code':id},
+          success: function(e){
+            data = JSON.parse(e)
+            if(data.result){
+              noti_person("Tarea Finalizada", "Producto eliminado con éxito")
+            }
+            else{
+              noti_person("ERROR", data.message)
+            }
+          }
+        })
+      })
+      $(".upload_excel_inventory").click(function(){
+        $(".data_inventory").click()
+      })
+      let List_product_excel = null;
+      $(".data_inventory").change(function () {
+        var input = this;
+        var file = input.files[0];
+        if (file) {
+          var reader = new FileReader();
+          reader.onload = function (e) {
+            var data = new Uint8Array(e.target.result);
+            var workbook = XLSX.read(data, { type: "array" });
+            var jsonData = [];
+            workbook.SheetNames.forEach(function (sheetName) {
+              var sheet = workbook.Sheets[sheetName];
+              jsonData.push(XLSX.utils.sheet_to_json(sheet));
+            });
+            List_product_excel = JSON.stringify(jsonData, null, 2)
+            $(".question_excel_inventory").click()
+          };
+          reader.readAsArrayBuffer(file);
+        } else {
+          noti_person("ERROR", "Selecciona un archivo Excel válido.")
+        }
+      });
+
+      $(".update_inventory").click(function(){
+        noti_person("Cargando Inventario", "Estamos cargando su inventario, espere a que le informemos que ya esta listo")
+        $.ajax({
+          url:"{% url 'Load_Inventory_Excel' %}",
+          method: "POST",
+          data: {csrfmiddlewaretoken: '{{ csrf_token }}','data':List_product_excel},
+          success:function(e){
+            _e = JSON.parse(e)
+            if(_e.result){
+              $(".close_inventory").click()
+              noti_person("Tarea Finalizada", "Ya tu inventario fue montado con existo")
+              location.reload(true)
+            }
+          }
+        })
+      })
+    })
+  </script>
+
+{% endblock %}

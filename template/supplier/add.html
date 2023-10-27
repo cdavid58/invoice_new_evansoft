@@ -1,0 +1,97 @@
+{% extends '../base.html' %}
+{% block content %}
+
+
+<div class="card mb-3" data-date="{{ i.registration_date }}">
+  <div class="card-body p-2 overflow-hidden">
+    <div class="row p-1">
+      <div class="col-md-6 col-12">
+        <h5>Crea un nuevo proveedor</h5>
+      </div>
+      <div class="col-md-3 ml-auto col-12 text-right">
+        <button class="btn btn-info List_Supplier">
+        	<span class="nav-link-icon">
+        		<span class="fas fa-chevron-left"></span>
+        	</span>
+        	<span class="nav-link-text ps-1">Lista de proveedores</span>  
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<form class="save_supplier_form">
+	<div class="card mb-3">
+		<div class="card-body">
+		  <div class="row" style="padding: 10px !important;">
+				<div class="row">
+					<div class="mb-3 col-md-2 col-12">
+					  <label class="form-label" for="exampleFormControlInput1">CC / NIT</label>
+					  <input class="form-control date_invoice documentI" name="documentI" autofocus type="text" autofocus />
+					</div>
+					<div class="mb-3 col-md-4 col-12">
+					  <label class="form-label" for="exampleFormControlInput1">Razón Social</label>
+					  <input class="form-control date_invoice name" name="name" type="text" />
+					</div>
+					<div class="mb-3 col-md-4 col-12">
+					  <label class="form-label" for="exampleFormControlInput1">E-mail</label>
+					  <input class="form-control date_invoice email" name="email" type="email" />
+					</div>
+					<div class="mb-3 col-md-2 col-12">
+					  <label class="form-label" for="exampleFormControlInput1">Teléfono</label>
+					  <input class="form-control date_invoice phone" name="phone" type="text" />
+					</div>
+				</div>
+				<div class="row p-1">
+					<div class="mb-3">
+						<input class="btn btn-primary save_supplier" type="button" value="Crear Proveedor">
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</form>
+{% endblock %}
+{% block script %}
+
+	<script>
+	  $(document).ready(function () {
+	  	console.clear()
+
+	    async function time_sleep() {
+	      for (let i = 0; i < 2; i++) {
+	        console.log(`Waiting ${i} seconds...`);
+	        await sleep(i * 1000);
+	      }
+	      location.reload(true);
+	    }
+
+	    $(".save_supplier").click(function () {
+				$.ajax({
+					data : $(".save_supplier_form").serialize(),
+					success: function(e){
+						result = JSON.parse(e)
+						if(result.result){
+							$.notify("Proveedor creado con éxito",'success')
+							time_sleep()
+						}
+						else{
+							$.notify(result.message,'error')
+						}
+					}
+				})
+	    });
+
+	    function sleep(ms) {
+	      return new Promise(resolve => setTimeout(resolve, ms));
+	    }
+
+
+	    $(".List_Supplier").click(function(){
+	    	location.href = "{% url 'List_Supplier' %}"
+	    })
+	  });
+	</script>
+
+
+{% endblock %}

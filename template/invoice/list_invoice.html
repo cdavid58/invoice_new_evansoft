@@ -1,0 +1,131 @@
+{% extends '../base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="card mb-3 p-1" data-date="{{ i.registration_date }}">
+  <div class="card-body p-2 overflow-hidden">
+    <div class="row">
+      <div class="col-md-5 col-12">
+        <h5>Lista de {{invoice}}</h5>
+      </div>
+    </div>
+  </div>
+</div>
+
+<input type="text" id="searchInput" placeholder="Buscar factura..."  autofocus class="form-control form-control-sm mb-2 searchInput">
+
+<div class="card" data-date="{{ i.registration_date }}">
+  <div class="card-body p-2 overflow-hidden">
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th class="text-dark fs-0">Prefijo</th>
+            <th class="text-dark">Fecha</th>
+            <th class="text-dark">Cliente</th>
+            <th class="text-dark">Total</th>
+            <th class="text-dark">Estado</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for i in page_obj %}
+            <tr>
+              <td class="text-dark name{{i.pk_user}}">{{i.prefix}}-{{i.number}}</td>
+              <td class="text-dark date_invoice">{{i.date}}</td>
+              <td class="text-dark client">{{i.name_client}}</td>
+              <td class="text-dark"><span class="total{{i.pk_invoice}}">${{i.total}}</span></td>
+              <td class="text-dark"><span class="state{{i.pk_invoice}}">{% if type_invoice == '1' and i.state == "Sin enviar a la DIAN" %}Factura Vigente{% else %}{{i.state}}{% endif %}</span></td>
+              <td>
+                <a class="btn btn-primary" href="" type="button">Ver</a>
+                {% if not i.canceled %}
+                  <button class="btn btn-danger cancel_invoice" id="{{i.pk_invoice}}" type="button">Anular</button>
+                {% endif %}
+                <button class="btn btn-falcon-default copy_invoice" id="{{i.pk_invoice}}" type="button"><span class="fas fa-print me-1"> </span></button>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+{% if page_obj.has_other_pages %}
+<div class="card-footer border-top d-flex justify-content-center">
+    {% if page_obj.has_previous %}
+      <a class="btn btn-falcon-default btn-sm me-2" href="?page=1" data-bs-toggle="tooltip" data-bs-placement="top" title="First">
+          <span class="fas fa-chevron-left"></span>
+      </a>
+    {% endif %}
+
+    {% for num in page_obj.paginator.page_range %}
+      {% if page_obj.number == num %}
+        <a class="btn btn-sm btn-falcon-default me-2 active">{{ num }}</a>
+      {% else %}
+        <a class="btn btn-sm btn-falcon-default me-2" href="?page={{ num }}">{{ num }}</a>
+      {% endif %}
+    {% endfor %}
+
+    {% if page_obj.has_next %}
+    <a class="btn btn-falcon-default btn-sm" href="?page={{ page_obj.paginator.num_pages }}" data-bs-toggle="tooltip" data-bs-placement="top" title="Last">
+        <span class="fas fa-chevron-right"></span>
+    </a>
+    {% endif %}
+</div>
+{% endif %}
+{% endblock %}
+{% block script %}
+
+  <script>
+    $(document).ready(function () {
+      $(document).on('click','.cancel_invoice', function(){
+        id = this.id
+        alert = null;
+        console.log("Hola")
+        $.ajax({
+          url:"{% url 'Annulled_Invoice' %}",
+          data:{'pk_invoice': id},
+          success: function(e){
+            e = JSON.parse(e)
+            console.log(e)
+            if(e.result){
+              $(".state"+id).text("Factura Anulada.")
+              $(".total"+id).text('$0')
+              alert = "EXITOSO"
+            }
+            else{
+              alert = "ERROR"
+            }
+            var text = e.message;
+            var notification = new Notification(alert, {
+              body: text,
+              icon: "{% static 'logo.png' %}"
+            });
+          }
+        })
+      })
+
+      $(".searchInput").on("input", function() {
+        var searchText = $(this).val().toLowerCase();
+        $("table tbody tr").each(function() {
+          var ccNitText = $(this).find(".date_invoice").text().toLowerCase();
+          var razonSocialText = $(this).find(".client").text().toLowerCase();
+          if (ccNitText.includes(searchText) || razonSocialText.includes(searchText)) {
+            $(this).show();
+          } else {
+            $(this).hide();
+          }
+        });
+      });
+
+      $(".copy_invoice").click(function(){
+        id = this.id
+        let params = "scrollbars=no,resizable=no,status=no,location=no,toolbar=no,menubar=no,width=800,height=600,left=100,top=100";
+        //window.open(url_path + "/order/Print_Invoice/"+id, "invoice", params);
+      })
+
+    });
+  </script>
+
+{% endblock %}

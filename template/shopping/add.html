@@ -1,0 +1,378 @@
+{% extends '../base.html' %}
+{% block content %}
+
+<style>
+  .table-responsive {
+    max-height: 300px !important;
+    overflow-y: auto !important;
+  }
+</style>
+
+<div class="card mb-3" data-date="{{ i.registration_date }}">
+  <div class="card-body p-2 overflow-hidden">
+    <div class="row p-1">
+      <div class="col-md-6 col-12">
+        <h5>Agrega una compra</h5>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div class="card mb-3">
+  <div class="card-body">
+    <div class="row">
+        <div class="mb-3 col-md-2 col-12">
+          <label class="form-label" for="exampleFormControlInput1">N° de Factura</label>
+          <input class="form-control number_invoice" name="number_invoice" autofocus type="text" />
+        </div>
+        <div class="mb-3 col-md-3 col-12">
+          <label class="form-label" for="exampleFormControlInput1">Fecha de Factura</label>
+          <input class="form-control date_invoice" name="date_invoice" type="date" />
+        </div>
+        <div class="mb-3 col-md-4 col-12">
+          <label class="form-label" for="exampleFormControlInput1">Proveedor</label>
+          <select class="form-select list_supplier" size="1" name="client">
+            <option value="0" disabled selected>Seleccione Proveedor...</option>
+            {% for i in list_supplier %}
+              <option value="{{i.pk}}">{{i.name}}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="mb-3 col-md-3 col-12">
+          <label class="form-label" for="exampleFormControlInput1">Forma de Pago</label>
+          <select class="form-select paymentform" size="1" name="paymentform">
+            <option value="1">Efectivo</option>
+            <option value="2">Crédito</option>
+            <option value="3">Transferencia</option>
+          </select>
+        </div>
+        <div class="mb-3 col-md-3 col-12 due_date" style="display: none;">
+          <label class="form-label" for="exampleFormControlInput1">Fecha de Pago</label>
+          <input class="form-control date_invoice_due" name="date_invoice" type="date" />
+        </div>
+    </div>
+  </div>
+</div>
+<div class="card mb-3">
+  <div class="card-body">
+    <div class="row" style="padding: 10px !important;">
+      <div class="row">
+        <div class="mb-3 col-md-4 col-12">
+          <label class="form-label" for="exampleFormControlInput1">Producto</label>
+          <select class="form-select list_product" id="list_product" size="1" name="list_product">
+            <option value="0" disabled selected>Seleccione primero un proveedor...</option>
+          </select>
+        </div>
+        <div class="mb-3 col-md-2 col-12">
+          <label class="form-label" for="exampleFormControlInput1">Cantidad</label>
+          <input class="form-control quantity enter text-right" disabled name="date_invoice" type="number" />
+        </div>
+        <div class="mb-3 col-md-2 col-12">
+          <label class="form-label" for="exampleFormControlInput1">Costo</label>
+          <input class="form-control cost text-right enter" disabled name="date_invoice" type="number" />
+        </div>
+        <div class="mb-3 col-md-1 col-12">
+          <label class="form-label" for="exampleFormControlInput1">IVA</label>
+          <input class="form-control tax text-right enter" disabled disabled type="number" />
+        </div>
+        <div class="mb-3 col-md-2 col-12">
+          <label class="form-label" for="exampleFormControlInput1">ICO</label>
+          <input class="form-control ipo text-right enter" disabled type="number" />
+        </div>
+
+        <div class="mb-3 col-md-2 col-12">
+          <label class="form-label" for="exampleFormControlInput1">Precio 1</label>
+          <input class="form-control text-right price1 number_price enter" disabled id="1" name="date_invoice" type="number" />
+        </div>
+        <div class="mb-3 col-md-2 col-12">
+          <label class="form-label" for="exampleFormControlInput1">Precio 2</label>
+          <input class="form-control text-right price2 number_price enter" disabled id="2" name="date_invoice" type="number" />
+        </div>
+        <div class="mb-3 col-md-2 col-12">
+          <label class="form-label" for="exampleFormControlInput1">Precio 3</label>
+          <input class="form-control text-right price3 number_price enter" disabled id="3" name="date_invoice" type="number" />
+        </div>
+        <div class="mb-3 col-md-2 col-12">
+          <label class="form-label" for="exampleFormControlInput1">Descuento</label>
+          <input class="form-control text-right discount number_price enter" name="discount" disabled id="5" type="number" />
+        </div>
+        <div class="row utilidad">
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card mb-3">
+  <div class="card-body p-2 overflow-hidden">
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Descripción</th>
+            <th>Cantidad</th>
+            <th>Costo</th>
+            <th>ICO</th>
+            <th>IVA</th>
+            <th>Descuento</th>
+            <th>Precio 1</th>
+            <th>Precio 2</th>
+            <th>Precio 3</th>
+          </tr>
+        </thead>
+        <tbody class="row_product"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="card mb-3">
+  <div class="card-body p-2 overflow-hidden">
+    <div class="row justify-content-center">
+      <button class="btn btn-primary col-sm-10 col-11 register_shopping" type="button">Registrar Compra</button>
+    </div>
+  </div>
+</div>
+
+
+{% endblock %}
+{% block script %}
+
+  <script>
+
+    $(document).ready(function(){
+      var list_product = null;
+      var obj = null;
+      var products = [];
+      var product
+
+      $(".date_invoice").val(new Date().toISOString().split('T')[0]);
+      $(".date_invoice_due").val(new Date().toISOString().split('T')[0]);
+
+
+      $(".paymentform").change(function(){
+        const id = parseInt($(this).val());
+        $(".due_date").css('display', id === 2 ? 'block' : 'none');
+      })      
+
+      $(".list_supplier").change(function(){
+        $.ajax({
+          url:"{% url 'Get_List_Products_Supplier' %}",
+          data: {'pk_supplier':$(this).val()},
+          success: function(e){
+            list_product = JSON.parse(e)
+            console.log(e)
+            if(list_product.length > 0){
+              $(".list_product").empty()
+              $(".list_product").append("<option value='0' disabled selected>Seleccione Producto..</option>")
+              for(i = 0; list_product.length; i++){
+                $(".list_product").append(`
+                  <option value="${list_product[i]['code']}">${list_product[i]['name']}</option>
+                `)
+              }
+            }
+          }
+        })
+      })
+
+      $(document).on('keyup','.enter', function(e) {
+        const code = e.keyCode ? e.keyCode : e.which;
+        value_quantity = $('.quantity').val()
+        if(code == 13){
+          if(value_quantity !== ""){
+            product = products.filter(producto => parseInt(producto.code) === parseInt(obj['code']))
+            if(product.length > 0){
+              console.log(value_quantity)
+              UpdateExistingProduct(product[0],value_quantity)
+            }
+            else{
+              Add_Product_Table(value_quantity)
+            }
+            $(".quantity").val("")
+            $(".list_product").focus()
+            $(".list_product").click()
+            $("#list_product").click()
+          }
+          else{
+            $.notify("No puede agregar valores si la cantidad esta vacia",'error')
+            $('.quantity').focus()
+          }
+        }
+      })
+
+      $(".list_product").change(function(){
+        obj = list_product.filter(product => product.code === $(this).val())[0]
+        console.log(obj)
+        $(".cost").val(obj['cost'])
+        $(".tax").val(obj['tax'])
+        $(".ipo").val(obj['ipo'])
+
+        $(".price1").val(obj['price_1'])
+        $(".price2").val(obj['price_2'])
+        $(".price3").val(obj['price_3'])
+        $(".discount").val(0)
+
+
+        $('.quantity').prop("disabled", false);
+        $(".quantity").focus()
+        $('.cost').prop("disabled", false);
+        $(".ipo").prop("disabled", false);
+        $(".price1").prop("disabled", false);
+        $(".price2").prop("disabled", false);
+        $(".price3").prop("disabled", false);
+        $(".price4").prop("disabled", false);
+      })
+
+      function Headers(){
+        return JSON.stringify({
+          "number":$(".number_invoice").val(),
+          "date_registration":$(".date_invoice").val(),
+          "pk_supplier":$(".list_supplier").val(),
+          "pk_paymentform":$(".paymentform").val(),
+          "payment_due_date":$(".date_invoice_due").val()
+        }, null, 2)
+      }
+
+
+      $(".register_shopping").click(function(){
+        items = JSON.stringify(products, null, 2)
+        $.ajax({
+          url:"{% url 'Save_Shopping' %}",
+          method: "POST",
+          data:{csrfmiddlewaretoken: '{{ csrf_token }}','items':items, 'headers':Headers()},
+          success: function(e){
+            e = JSON.parse(e)
+            if(!e.result){
+              noti_person('ERROR', e.message)
+            }
+            else{
+             noti_person('Tarea Finalizada', "Factura de compra registrada con éxito")
+             location.reload(true) 
+            }
+          }
+        })
+
+      })
+
+
+      $(".number_invoice").keyup(function(){
+        $.ajax({
+          url:"{% url 'Verified_Invoice' %}",
+          data: {'number': $(this).val()},
+          success: function(e) {
+            e = JSON.parse(e)
+            if(!e.result){
+              $.notify(e.message,'ERROR')
+              noti_person('ERROR', e.message)
+            }
+          }
+        })
+      })
+
+      $(document).on('keyup',".number_price",function(){
+        id = this.id
+        value_price = parseInt($(this).val())
+        value_cost = parseInt($(".cost").val())
+        if(value_price > value_cost){
+          console.log("Mayor")
+          price =((( value_price - value_cost ) / value_price) * 100).toFixed(1)
+          $(".percentage"+id).val(price+'%')
+        }
+        else{
+          console.log("Menor")
+          $(".percentage"+id).val('0%') 
+        }
+      })
+
+      $(document).on('keyup',".cost",function(){
+        var index = 1;
+        for(index; index <= 4; index++){
+          id = index
+          price = 0
+          value_price = parseInt($(".price"+index).val())
+          value_cost = parseInt($(this).val())
+          if(value_price > value_cost){
+            console.log("Mayor")
+            price =((( value_price - value_cost ) / value_price) * 100).toFixed(1)
+            $(".percentage"+id).val(price+'%')
+          }
+          else{
+            console.log("Menor")
+            $(".percentage"+id).val('0%') 
+          }
+        }
+        index = 1;
+      })
+
+
+      function UpdateExistingProduct(product, newQuantity) {
+        // Buscar la fila existente con la clase correspondiente
+        const existingRow = $(`.row_product td.${product.code}`).closest("tr");
+        if (existingRow.length > 0) {
+          const quantityCell = existingRow.find(".text-center");
+          total_quantity = newQuantity !== "" ? parseInt(newQuantity) + parseInt(quantityCell.text()) : quantityCell
+          quantityCell.text(total_quantity);
+          product.quantity = total_quantity
+
+          const costCell = existingRow.find(`.cost${product.code}`);
+          const ipoCell = existingRow.find(`.ipo${product.code}`);
+          const priceCell = existingRow.find(`.price${product.code}`);
+          const price2Cell = existingRow.find(`.price2${product.code}`);
+          const price3Cell = existingRow.find(`.price3${product.code}`);
+          const price4Cell = existingRow.find(`.discount${product.code}`);
+
+          costCell.text($('.cost').val())
+          ipoCell.text($(".ipo").val())
+          priceCell.text($(".price1").val())
+          price2Cell.text($(".price2").val())
+          price3Cell.text($(".price3").val())
+          price4Cell.text($(".discount").val())
+
+          product.cost = $('.cost').val()
+          product.ipo = $(".ipo").val()
+          product.price = $(".price1").val()
+          product.price2 = $(".price2").val()
+          product.price3 = $(".price3").val()
+          product.price4 = $(".discount").val()
+
+
+        }
+      }
+
+
+      function Add_Product_Table(newQuantity){
+        $(".row_product").append(`
+          <tr>
+            <td class="${obj['code']}">${obj['name']}</td>
+            <td class="text-center">${newQuantity}</td>
+            <td class"cost${obj['code']}"> ${$('.cost').val()}</td>
+            <td class"ipo${obj['code']}">${$('.ipo').val()}</td>
+            <td>${obj['tax']}</td>
+            <td class"price4${obj['code']}">${$('.discount').val()}</td>
+            <td class"price${obj['code']}">${$('.price1').val()}</td>
+            <td class"price2${obj['code']}">${$('.price2').val()}</td>
+            <td class"price3${obj['code']}">${$('.price3').val()}</td>
+          </tr>
+        `)
+
+        products.push({
+          'code': obj['code'],
+          'name': obj['name'],
+          'cost': $('.cost').val(),
+          'ipo': $(".ipo").val(),
+          'price_1': $(".price1").val(),
+          'price_2': $(".price2").val(),
+          'price_3': $(".price3").val(),
+          'discount': $(".discount").val(),
+          'quantity': $(".quantity").val(),
+          'tax': obj['tax']
+        })
+        return 0
+      }
+
+    })
+    
+  </script>
+
+{% endblock %}

@@ -1,0 +1,196 @@
+{% extends '../base.html' %}
+{% block content %}
+
+<div class="card mb-3 p-1" data-date="{{ i.registration_date }}">
+  <div class="card-body p-2 overflow-hidden">
+    <div class="row">
+      <div class="col-6">
+        <h5>Editar producto {{p.name}}</h5>
+      </div>
+      <div class="col-3 ml-auto">
+        <button class="btn btn-info list_product">
+        	<span class="nav-link-icon">
+        		<span class="fas fa-chevron-left"></span>
+        	</span>
+        	<span class="nav-link-text ps-1">Lista de productos</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<form class="form_edit_product">
+	<div class="card mb-3">
+		<div class="card-body">
+		  <div class="row" style="padding: 10px !important;">
+				<div class="row">
+					<div class="mb-3 col-md-3 col-12">
+					  <label class="form-label" for="exampleFormControlInput1">Código</label>
+					  <input class="form-control date_invoice" value="{{p.code}}" name="code" type="text" />
+					</div>
+					<div class="mb-3 col-md-3 col-12">
+					  <label class="form-label" for="exampleFormControlInput1">Producto</label>
+					  <input class="form-control date_invoice" value="{{p.name}}" name="name" autofocus type="text" />
+					</div>
+					<div class="mb-3 col-md-2 col-6">
+					  <label class="form-label" style="text-align: center;" for="exampleFormControlInput1">IVA</label>
+					  <select class="form-select text-right" size="1" name="tax">
+					  	<option value="{{p.tax}}">{{p.tax}}</option>
+					  	<option value="0">0</option>
+					  	<option value="5">5</option>
+					  	<option value="19">19</option>
+					  </select>
+					</div>
+					<div class="mb-3 col-md-2 col-6">
+					  <label class="form-label" for="exampleFormControlInput1">Cantidad</label>
+					  <input class="form-control date_invoice text-right" value="{{p.quantity}}" name="quantity" type="number" />
+					</div>
+					<div class="mb-3 col-md-2 col-6">
+					  <label class="form-label" for="exampleFormControlInput1">IPO</label>
+					  <input class="form-control date_invoice text-right" value="{{p.ipo}}" name="ipo" type="number" />
+					</div>
+					<div class="mb-3 col-md-2 col-6">
+					  <label class="form-label" for="exampleFormControlInput1">Descuento</label>
+					  <input class="form-control date_invoice text-right" value="{{p.discount}}" name="discount" value="0" type="number" />
+					</div>
+					<div class="mb-3 col-md-2 col-6">
+					  <label class="form-label" for="exampleFormControlInput1">Costo</label>
+					  <input class="form-control date_invoice cost text-right" value="{{p.cost}}" name="cost" type="number" />
+					</div>
+					<div class="mb-3 col-md-2 col-6">
+					  <label class="form-label" for="exampleFormControlInput1">Precio 1</label>
+					  <input class="form-control date_invoice price text-right" id="1" value="{{p.price_1}}" name="price_1" type="number" />
+					</div>
+					<div class="mb-3 col-md-2 col-6">
+					  <label class="form-label" for="exampleFormControlInput1">Precio 2</label>
+					  <input class="form-control date_invoice text-right price" id="2" value="{{p.price_2}}" name="price_2" type="number" />
+					</div>
+					<div class="mb-3 col-md-2 col-6">
+					  <label class="form-label" for="exampleFormControlInput1">Precio 3</label>
+					  <input class="form-control date_invoice text-right price" id="3" value="{{p.price_3}}" name="price_3" value="0" type="number" />
+					</div>
+					
+					<div class="mb-3 col-md-3 col-12">
+					  <label class="form-label" style="text-align: center;" for="exampleFormControlInput1">Categoria</label>
+					  <select class="form-select cat" size="1">
+					  	<option value="{{p.pk_cat}}">{{p.category}}</option>
+					  	{% for i in cat %}
+					  		{% if i.pk_category != p.pk_cat %}
+					  			<option value="{{i.pk_category}}">{{i.name}}</option>
+					  		{% endif %}
+					  	{% endfor %}
+					  </select>
+					</div>
+					<div class="mb-3 col-md-3 col-12">
+					  <label class="form-label" style="text-align: center;" for="exampleFormControlInput1">Subcategoria</label>
+					  <select class="form-select subc" size="1" name="pk_subcategory">
+					  	<option value="{{p.pk_subcategory}}">{{p.subcategory}}</option>
+					  	{% for i in p.list_subcategory %}
+					  		{% if i.pk_sub != p.pk_subcategory %}
+					  			<option value="{{i.pk_sub}}">{{i.name}}</option>
+					  		{% endif %}
+					  	{% endfor %}
+					  </select>
+					</div>
+					<div class="mb-3 col-md-3 col-12">
+					  <label class="form-label" style="text-align: center;" for="exampleFormControlInput1">Proveedor</label>
+					  <select class="form-select" size="1" name="pk_supplier">
+					  	<option value="{{p.pk_supplier}}">{{p.supplier}}</option>
+					  	{% for i in list_supplier %}
+					  		{% if i.pk != p.pk_supplier %}
+					  			<option value="{{i.pk}}">{{i.name}}</option>
+					  		{% endif %}
+					  	{% endfor %}
+					  </select>
+					</div>
+					<div class="row">
+						<h5 class="mb-3">Margen de utilidad</h5>
+						{% for i in p.calculate_profit_percentages %}
+							<div class="mb-3 col-md-2 col-6">
+							  <label class="form-label" for="exampleFormControlInput1">{{i.name}}</label>
+							  <input class="form-control date_invoice text-right percentage{{i.id}}" disabled value="{{i.percentage}}" type="text" />
+							</div>
+						{% endfor %}
+					</div>
+				</div>
+				<div class="row p-1">
+					<div class="mb-3">
+						<input class="btn btn-primary edit_product" type="button" value="Actualizar Producto">
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</form>
+
+{% endblock %}
+{% block script %}
+
+	<script>
+	  $(document).ready(function () {
+	  	console.clear()
+	    $(".cat").change(function () {
+	      const id = $(this).val();
+	      $.ajax({
+	        url: "{% url 'Get_Subcategory' %}",
+	        data: { 'pk_category': id },
+	        success: function (e) {
+	          const obj = JSON.parse(e);
+	          const subcSelect = $(".subc");
+	          subcSelect.empty();
+	          obj.forEach(function (item) {
+	            subcSelect.append(`<option value="${item.pk_sub}">${item.name}</option>`);
+	          });
+	          subcSelect.removeAttr("disabled");
+	        }
+	      });
+	    });
+
+	    $(".subc").keyup(function (e) {
+	      const code = e.keyCode ? e.keyCode : e.which;
+	      if (code === 70) {
+	        $(".save_product").click();
+	      }
+	    });
+
+	    $(".edit_product").click(function () {
+	      const form = $('.form_edit_product').serialize();
+	      $.ajax({
+	        data: form,
+	        success: function (e) {
+	          e = JSON.parse(e)
+	          if (e.result) {
+	            noti_person("Tarea Finalizada", 'Producto actualizado con éxito')
+	          } 
+	          else {
+	          	noti_person("ERROR", e.message)
+	          }
+	        }
+	      });
+	    });
+
+	    $(".list_product").click(function(){
+	    	location.href = "{% url 'Get_List_Products' %}"
+	    })
+
+	    $(document).on('keyup',".price",function(){
+	    	id = this.id
+	    	value_price = parseInt($(this).val())
+	    	value_cost = parseInt($(".cost").val())
+	    	if(value_price >= value_cost){
+	    		console.log("Entre")
+		    	price = ((( value_price - value_cost ) / value_price) * 100).toFixed(1)
+		    	console.log(value_price)
+		    	console.log(value_cost)
+		    	$(".percentage"+id).val(price+'%')
+		    }
+		    else{
+		    	$(".percentage"+id).val('0%')	
+		    }
+	    })
+
+
+	  });
+	</script>
+
+
+{% endblock %}

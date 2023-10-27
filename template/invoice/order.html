@@ -1,0 +1,638 @@
+{% extends '../base.html' %}
+{% block content %}
+
+<div class="card mb-3 p-1" data-date="{{ i.registration_date }}">
+  <div class="card-body p-2 overflow-hidden">
+    <div class="row">
+      <div class="col-md-5 col-12">
+        <h5>Facturación</h5>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card mb-3">
+	<div class="card-body">
+	  <div class="row" style="padding: 10px !important;">
+			<div class="row">
+				<div class="mb-3 col-md-3  col-12">
+					<label for="organizerMultiple">Cliente</label>
+					<select class="form-select js-choice client" id="organizerSingle" size="1" name="client">
+					  {% for i in client %}
+					  	<option value="{{i.pk_client}}">{{i.name}}</option>
+					  {% endfor %}
+					</select>
+				</div>
+				<div class="mb-3 col-md-3 col-12">
+				  <label class="form-label" for="exampleFormControlInput1">Fecha</label>
+				  <input class="form-control date_invoice" name="date_invoice" type="date" />
+				</div>
+				<div class="mb-3 col-md-3  col-12 due_date" style="display: none;">
+				  <label class="form-label" for="exampleFormControlInput1">Fecha de vencimiento</label>
+				  <input class="form-control date_invoice_due" name="date_invoice" type="date" />
+				</div>
+				<div class="mb-3 col-md-3  col-12">
+					<label for="organizerMultiple">Forma de Pago</label>
+					<select class="form-select js-choice paymentform" id="organizerSingle" size="1" name="paymentform">
+					  <option value="1">Efectivo</option>
+					  <option value="2">Crédito</option>
+					  <option value="3">Transferencia</option>
+					</select>
+				</div>
+			</div>
+
+			<div class="row">
+				<div class="mb-3 col-md-3  col-12">
+					<label for="organizerMultiple">Referencia</label>
+					<input class="form-control referens" name="waiter" type="text" />
+				</div>
+				<div class="mb-3 col-md-3 col-12">
+				  <label class="form-label" for="exampleFormControlInput1">Asignar Cuenta</label>
+				  <input class="form-control save_account" type="button" value="Guardar Cuenta" />
+				</div>
+				<div class="mb-3 col-md-3 col-12">
+				  <label class="form-label" for="exampleFormControlInput1">Recuperar Cuentas</label>
+				  <input class="form-control recovery_invoice" type="button" value="Recuperar Cuenta" />
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="card mb-3">
+	<div class="card-body">
+	  <div class="row">
+			<div class="row">
+				<div class="mb-3 col-md-4">
+					<label for="organizerMultiple">Producto</label>
+					<select class="form-select js-choice product" id="organizerSingle" size="1" name="product" data-options='{"removeItemButton":true,"placeholder":true}'>
+					  <option value="0" disabled selected>Seleccione un producto...</option>
+					  {% for i in product %}
+					  	<option value="{{i.pk_product}}">{{i.name}}</option>
+					  {% endfor %}
+					</select>
+				</div>
+				<div class="mb-3 col-md-1 col-4">
+				  <label class="form-label" for="exampleFormControlInput1">Cantidad</label>
+				  <input class="form-control quantity text-right" name="quantity" type="number" />
+				</div>
+				<div class="mb-3 col-md-2 col-4">
+				  <label class="form-label" for="exampleFormControlInput1">Descuento</label>
+				  <input class="form-control discount text-right" name="discount" value="0" type="number" />
+				</div>
+				<div class="mb-3 col-md-2 col-4">
+				  <label class="form-label" for="exampleFormControlInput1">Precio</label>
+				  <input class="form-control price text-right" disabled name="price" value="0" type="number" />
+				</div>
+				<div class="mb-3 col-md-1 col-4">
+				  <label class="form-label" for="exampleFormControlInput1">Stock</label>
+				  <input class="form-control stock text-right" disabled name="stock" type="number" value="0" />
+				</div>
+				<div class="mb-3 col-md-2 col-4">
+				  <label class="form-label" for="exampleFormControlInput1">Total</label>
+				  <input class="form-control total_product text-right" disabled name="total_product" value="0" type="number" />
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="card mb-3">
+  <div class="card-body p-2 overflow-hidden">
+  	<div class="table-responsive">
+	    <table class="table">
+	      <thead>
+	        <tr>
+	          <th class="fs-0">Código</th>
+	          <th>Descripción</th>
+	          <th>Cantidad</th>
+	          <th>Base</th>
+	          <th>IVA</th>
+	          <th>Descuento</th>
+	          <th>ICO</th>
+	          <th>SubTotal</th>
+	        </tr>
+	      </thead>
+	      <tbody class="row_product"></tbody>
+	    </table>
+	  </div>
+  </div>
+</div>
+<div class="card mb-3">
+  <div class="card-body p-2 overflow-hidden">
+  	<div class="container">
+		    <div class="row">
+		        <div class="col-md-8"></div>
+		        <div class="col-md-4">
+		            <div class="card mb-3">
+		                <div class="card-body p-2 overflow-hidden">
+		                    <div class="row">
+		                        <table class="table">
+		                            <tbody class="">
+		                                <tr>
+		                                    <td class="text-right">
+		                                        SubTotal: 
+		                                    </td>
+		                                    <td class="text-right">
+		                                    	<span class="subtotal" style="text-align: center !important;">$0</span>
+		                                    </td>
+		                                </tr>
+		                                <tr>
+		                                    <td class="text-right">
+		                                        Impuestos: 
+		                                    </td>
+		                                    <td class="text-right">
+		                                    	<span class="impuestos" style="text-align: center !important;">$0</span>
+		                                    </td>
+		                                </tr>
+		                                <tr>
+		                                    <td class="text-right">
+		                                        ICO: 
+		                                    </td>
+		                                    <td class="text-right">
+		                                    	<span class="ico" style="text-align: center !important;">$0</span>
+		                                    </td>
+		                                </tr>
+		                                <tr>
+		                                    <td class="text-right">
+		                                        Descuento: 
+		                                    </td>
+		                                    <td class="text-right">
+		                                    	<span class="descuento" style="text-align: center !important;">$0</span>
+		                                    </td>
+		                                </tr>
+		                                <tr>
+		                                    <td class="text-right">
+		                                        Total: 
+		                                    </td>
+		                                    <td class="text-right">
+		                                    	<span class="total_invoice" style="text-align: center !important;">$0</span>
+		                                    </td>
+		                                </tr>
+		                            </tbody>
+		                        </table>
+		                    </div>
+		                </div>
+		            </div>
+		        </div>
+		    </div>
+		</div>
+  </div>
+</div>
+<div class="card mb-3">
+  <div class="card-body p-2 overflow-hidden">
+  	<div class="container">
+	    <div class="row">
+	    	<button class="btn btn-primary save_invoice_billing">Facturar</button>
+	    </div>
+	  </div>
+	</div>
+</div>
+
+<button class="btn btn-primary question_excel_inventory" type="button" data-bs-toggle="modal" hidden data-bs-target="#invent_excel">Launch demo modal</button>
+<div class="modal fade" id="invent_excel" tabindex="-1" role="dialog" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document" style="max-width:800px">
+    <div class="modal-content position-relative">
+      <div class="position-absolute top-0 end-0 mt-2 me-2 z-index-1">
+        <button class="btn-close btn btn-sm btn-circle d-flex flex-center transition-base" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body p-0">
+      	<div class="row">
+			    <table class="table items_saved">
+			      <thead>
+			        <tr>
+			          <th>Referencia</th>
+			          <th>Fecha</th>
+			          <th>Total</th>
+			        </tr>
+			      </thead>
+			      <tbody class="row_product_local"></tbody>
+			    </table>
+			  </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary close_invoice_save" type="button" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block script %}
+
+	<script>
+		let products = [];
+		let limit_stock = 10
+		window.csrfToken = "{{ csrf_token }}";
+		let local_items_saved = false
+		let local_row_items_saved = false
+		let referens_header = null
+		let referens_body = null
+
+
+		$(document).ready(function () {
+
+				function recovery_invoice_saved(){
+					var totalItems = localStorage.length;
+					var local = [];
+					for (var i = 0; i < totalItems; i++) {
+					  var key = localStorage.key(i);
+					  if (key.includes("Headers")) {
+					    var value = localStorage.getItem(key);
+					    local.push(JSON.parse(value));
+					  }
+					}
+					$('.row_product_local').empty()
+				  for(j = 0; j < local.length; j++){
+				  	e = local[j]
+				  	$('.row_product_local').append(`
+				  		<tr>
+				  			<td>${e.referens}<td>
+				  			<td>${e.date_invoice}<td>
+				  			<td>${e.total_invoice}<td>
+				  		</tr>
+				  	`)
+					}
+				}
+
+				recovery_invoice_saved()
+
+				$(".recovery_invoice").click(function(){
+					$(".question_excel_inventory").click()
+				})
+				
+
+				$(".items_saved").click(function(){
+					if (event.target.tagName === "TD") {
+				    var celda = event.target;
+				    var fila = celda.parentElement;
+				    var celdas = fila.getElementsByTagName("td");
+				    var referens = celdas[0].textContent;
+				    var totalItems = localStorage.length;
+
+				    var header = {};
+				    var items = null
+				    
+				    for (var i = 0; i < totalItems; i++) {
+						  var key = localStorage.key(i);
+						  if (key === "Headers_"+referens) {
+						    var value = localStorage.getItem(key);
+						    header = JSON.parse(value)
+						    items = JSON.parse(localStorage.getItem("Body_"+referens))
+					  	}
+						}
+						local_items_saved = true
+						local_row_items_saved = true
+
+						referens_body = "Body_"+referens
+						referens_header = "Headers_"+referens
+						for(var i = 0; i < items.length; i++){
+							products.push(items[i])
+							UpdateExistingProduct(items[i].pk_product, items[i].quantity)
+						}
+						$('.close_invoice_save').click()
+				  }
+				})
+
+
+				$(".product").click()
+		    $(".date_invoice").val(new Date().toISOString().split('T')[0]);
+		    $(".due_date").val(new Date().toISOString().split('T')[0]);
+
+		    $(".paymentform").change(function () {
+		        const id = parseInt($(this).val());
+		        $(".due_date").css('display', id === 2 ? 'block' : 'none');
+		    });
+
+		    $(".save_invoice_billing").click(function(){
+		    	Save_Invoice()
+		    })
+
+		    let id_product = null;
+
+		    $('.product').change(function () {
+		        const id = $(this).val();
+		        console.log(id)
+		        if($(this).val() !== null){
+			        id_product = id;
+			        $.ajax({
+			            url: "{% url 'Get_Product' %}",
+			            data: { 'pk_product': id },
+			            success: function (data) {
+			                const obj = JSON.parse(data)
+			                products.push(obj);
+			                $(".price").val(obj['price'])
+			                const stock = parseInt(obj['quantity'])
+			                $(".stock").css({
+			                    'background': stock <= 10 ? 'red' : 'initial',
+			                    'color': stock <= 10 ? 'white' : 'initial'
+			                })
+			                $(".stock").val(stock)
+			                $(".quantity").focus()
+			                local_items_saved = false
+			            }
+			        });
+			      }
+			      else{
+			      	$(".quantity").val('')
+			      	$(".total").val(0)
+			      	$(".stock").val(0)
+			      	$(this).click()
+			      }
+		    });
+
+		    $(".client").change(function(e){
+		    	$(".quantity").focus()
+		    })
+
+		    $(".quantity").keyup(function (e) {
+	        const value = parseInt($(this).val());
+	        const code = e.keyCode ? e.keyCode : e.which;
+	        console.log(code)
+	        if(code == 67){
+	        	$(".client").click()
+	        	$(this).val('')
+	        }
+	        if(code == 70){
+	        	Save_Invoice()
+	        }
+	        if(code == 66){
+	        	$(this).val('')
+			      	$(".total").val(0)
+			      	$(".product").click()
+	        }
+	        const stockValue = parseInt($(".stock").val());
+	        if (value > stockValue) {
+	            $.notify("No hay suficiente stock disponible", "error");
+	            $(".total_product").val(0);
+	        }else {
+	            const total_product = value * parseInt($(".price").val());
+	            $(".total_product").val(total_product);
+	            if (code === 13) {
+	                if (value > 0) {
+	                    $.ajax({
+	                        url: "{% url 'Product_Reserved' %}",
+	                        data: { 'pk_product': id_product, 'quantity': value },
+	                        success: function (response) {
+	                            if (response === 'True') {
+	                                UpdateExistingProduct(id_product, value);
+	                                $('.stock').val(stockValue - value);
+	                                const stock = parseInt($(".stock").val());
+															    $(".stock").css({
+														        'background': stock <= limit_stock ? 'red' : 'initial',
+														        'color': stock <= limit_stock ? 'black' : 'black'
+														      });
+														      if(stock <= limit_stock){
+															      $.notify("Hay muy poco productos de stock", "error");
+															    }
+															    $(".quantity").val('')
+
+	                            } else {
+	                                alert("Error al reservar el producto");
+	                            }
+	                        }
+	                    });
+	                } else if (value < 0) {
+	                    UpdateExistingProduct(id_product, value);
+	                }
+	            }
+		      }
+		    });
+
+		    $(".discount").keyup(function (e) {
+		        const code = e.keyCode ? e.keyCode : e.which;
+		        const discount = $(this).val();
+
+		        if (code === 13) {
+		            if (parseInt(discount) >= 0 && parseInt($(".quantity").val()) > 0) {
+		                Add_Product(products[products.length - 1], parseInt($(".quantity").val()));
+		                $('.stock').val(parseInt($(".stock").val()) - parseInt($(".quantity").val()));
+		            } else {
+		                if (parseInt($(".quantity").val()) < 0) {
+		                    alert("Eliminando");
+		                }
+		                $.notify("No puede agregar un item sin tener un valor en la cantidad", "error");
+		                $(".quantity").focus();
+		            }
+		        }
+		    });
+
+
+		    $(".save_account").click(function(){
+		    	if($(".referens").val().length > 5){
+			    	Data_Header()
+			    	GenerateTableJSON()
+			    	headers = Data_Header()
+			    	details_invoice = GenerateTableJSON()
+			    	localStorage.setItem("Headers_"+$(".referens").val(),headers)
+			    	localStorage.setItem("Body_"+$(".referens").val(),details_invoice)
+			    	recovery_invoice_saved()
+			    	location.reload(true)
+			    }
+			    else
+			    {
+			    	noti_person("ERROR", "Debe ingresar un nombre en la referencia");
+			    	$(".referens").focus();
+			    }
+
+		    })
+
+		});
+
+		function CalculateTotalsInvoice(){
+				var filas = $(".row_product").find("tr");
+        var resultado = "";
+        let subtotal_row_table_invoice = 0
+        let impoconsumo = 0
+        let impuestos = 0
+				let tax_row_table_invoice = 0
+        for(i=0; i<filas.length; i++){
+            var celdas = $(filas[i]).find("td")
+          	subtotal_row_table_invoice += parseFloat($(celdas[8]).text())
+          	impoconsumo += parseFloat($(celdas[7]).text()) * parseFloat($(celdas[3]).text())
+          	impuestos += parseFloat($(celdas[5]).text()) * parseFloat($(celdas[3]).text())
+        }
+        $(".subtotal").text(Math.round(subtotal_row_table_invoice))
+        $(".ico").text(Math.round(impoconsumo))
+        $('.impuestos').text(Math.round(impuestos))
+        $('.descuento').val(0)
+        let total = impoconsumo + subtotal_row_table_invoice + impuestos
+        $(".total_invoice").text(Math.round(total))
+        $(".quantity").val('')
+		}
+
+		function Add_Product(product, quantity) {
+
+			if(!local_items_saved){
+		    const price_without_ipo = product['price'] - product['ipo']
+		    const baseWithDiscount = CalculateBaseWithDiscount(product)
+		    const taxValue = CalculateTaxValue(product, baseWithDiscount)
+		    const totalValue = CalculateTotalValue(baseWithDiscount, quantity)
+		    
+		    $(".row_product").append(`
+		        <tr>
+		            <td hidden class="${product['pk_product']}">${product['pk_product']}</td>
+		            <td class="${product['code']}">${product['code']}</td>
+		            <td>${product['name']}</td>
+		            <td class="text-center">${quantity}</td>
+		            <td>${baseWithDiscount.toFixed(2)}</td>
+		            <td>${taxValue}</td>
+		            <td>${$('.discount').val()}</td>
+		            <td>${product['ipo']}</td>
+		            <td>${totalValue}</td>
+		        </tr>
+		    `);
+		  }
+		  else{
+		    const baseWithDiscount =  product.price
+		    const taxValue = product.tax
+		    const totalValue = product.totalValue
+		    
+		    $(".row_product").append(`
+		        <tr>
+		            <td hidden class="${product.pk_product}">${product.pk_product}</td>
+		            <td class="${product.code}">${product.code}</td>
+		            <td>${product.product}</td>
+		            <td class="text-center">${quantity}</td>
+		            <td>${baseWithDiscount.toFixed(2)}</td>
+		            <td>${taxValue}</td>
+		            <td>${product.discount}</td>
+		            <td>${product.ipo}</td>
+		            <td>${totalValue}</td>
+		        </tr>
+		    `);
+
+		  }
+		  CalculateTotalsInvoice();
+		}
+
+
+
+
+		function UpdateExistingProduct(pk_product, quantity) {
+		    const existingRow = $(`.row_product td.${pk_product}`).closest("tr");
+		    if (existingRow.length > 0) {
+		        const existingQuantity = parseInt(existingRow.find(".text-center").text());
+		        const newQuantity = existingQuantity + quantity;
+		        existingRow.find(".text-center").text(newQuantity);
+		        const productIndex = products.findIndex(product => parseInt(product.pk_product) === parseInt(pk_product));
+		        if (productIndex !== -1) {
+		            const product = products[productIndex];
+		            const baseWithDiscount = CalculateBaseWithDiscount(product, newQuantity);
+		            if(!local_row_items_saved){
+			            const taxValue = CalculateTaxValue(product, baseWithDiscount);
+			          }
+		            const totalValue = CalculateTotalValue(baseWithDiscount, newQuantity);
+		            
+		            // existingRow.find("td:eq(4)").text(baseWithDiscount.toFixed(2));
+		            if(!local_row_items_saved){
+		            	existingRow.find("td:eq(5)").text(taxValue)
+		            }
+		            existingRow.find("td:eq(8)").text(totalValue);
+		            CalculateTotalsInvoice();
+		        }
+		    } else {
+	        Add_Product(products.find(product => parseInt(product.pk_product) === parseInt(pk_product)), quantity);
+		    }
+		}
+
+
+		function CalculateBaseWithDiscount(product) {
+			if(!local_row_items_saved){
+		    const discount = parseInt($('.discount').val()) / 100;
+		    const base = (product['price'] - product['ipo']) / (1 + (parseFloat(product['tax']) / 100));
+		    return (base - (base * discount));
+		  }
+		  else{
+		  	return product.price	
+		  }
+		}
+
+		function CalculateTaxValue(product, baseWithDiscount) {
+		    return ((product['price'] - product['ipo']) - baseWithDiscount).toFixed(2);
+		}
+
+		function CalculateTotalValue(baseWithDiscount, newQuantity) {
+		    return (baseWithDiscount  * parseFloat(newQuantity) ).toFixed(2);
+		}
+
+
+		function Save_Invoice(){
+			$.ajax({
+				method: "POST",
+				data: {csrfmiddlewaretoken: '{{ csrf_token }}', 'headers':Data_Header(), 'details_invoice': GenerateTableJSON()},
+				success: function(e){
+					e = JSON.parse(e)
+					if(e.result){
+						localStorage.removeItem(referens_header);
+						localStorage.removeItem(referens_body);
+						let params = "scrollbars=no,resizable=no,status=no,location=no,toolbar=no,menubar=no,width=800,height=600,left=100,top=100";
+						window.open("{{request.session.url}}/order/Print_Invoice/"+e.pk_invoice, "invoice", params);
+						location.reload(true)
+					}
+				}
+			})
+		}
+
+		function Data_Header(){
+			type_invoice = 1
+			if(parseFloat($(".total_invoice").text()) > parseFloat(212666) && '{{request.session.fe}}' == "True"){
+				type_invoice = 2
+			}
+			return JSON.stringify({
+				"pk_user":"{{request.session.pk_user}}",
+				"prefix":"FFET",
+				"pk_client": (parseInt($(".client").val()) == 0 ) ? 5 : $(".client").val(),
+				"date_invoice":$(".date_invoice").val(),
+				"date_invoice_due":$(".date_invoice_due").val(),
+				"paymentform":$(".paymentform").val(),
+				'type_invoice': type_invoice,
+				"total_invoice": $(".total_invoice").text(),
+				'referens': $(".referens").val()
+			}, null, 2)
+		}
+
+
+		function GenerateTableJSON() {
+		    const tableRows = $(".row_product tr");
+		    const jsonData = [];
+
+		    tableRows.each(function() {
+		        const row = $(this);
+		        const pk_product = row.find("td:eq(0)").text();
+		        const code = row.find("td:eq(1)").text();
+		        const product = row.find("td:eq(2)").text();
+		        const quantity = parseInt(row.find("td:eq(3)").text());
+		        const price = parseFloat(row.find("td:eq(4)").text());
+		        const tax = parseFloat(row.find("td:eq(5)").text());
+		        const discount = parseFloat(row.find("td:eq(6)").text());
+		        const ipo = parseFloat(row.find("td:eq(7)").text());
+		        const totalValue = parseFloat(row.find("td:eq(8)").text());
+
+		        jsonData.push({
+		            pk_product,
+		            code,
+		            product,
+		            quantity,
+		            price,
+		            tax,
+		            discount,
+		            ipo,
+		            totalValue
+		        });
+		    });
+
+		    return JSON.stringify(jsonData, null, 2); // Formateo para mejor legibilidad
+		}
+
+
+
+
+
+
+
+
+
+	</script>
+
+{% endblock %}
