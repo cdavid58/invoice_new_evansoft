@@ -1,0 +1,198 @@
+{% extends '../base.html' %}
+{% block content %}
+
+<div class="card mb-3" data-date="{{ i.registration_date }}">
+  <div class="card-body p-2 overflow-hidden">
+    <div class="row p-1">
+      <div class="col-md-6 col-12">
+        <h5>Crea un nuevo empleado / usuario</h5>
+      </div>
+      <div class="col-md-3 ml-auto col-12 text-right">
+        <button class="btn btn-info list_product">
+        	<span class="nav-link-icon">
+        		<span class="fas fa-chevron-left"></span>
+        	</span>
+        	<span class="nav-link-text ps-1">Lista de empleados</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<form class="form">
+	<div class="card mb-3">
+		<div class="card-body">
+		  <div class="row" style="padding: 10px !important;">
+				<div class="row">
+					<div class="mb-3 col-md-2 col-12">
+					  <label class="form-label" for="exampleFormControlInput1">CC / NIT</label>
+					  <input class="form-control date_invoice username" name="identification_number" autofocus type="number" />
+					</div>
+					<div class="mb-3 col-md-3 col-12">
+					  <label class="form-label" for="exampleFormControlInput1">Nombres</label>
+					  <input class="form-control date_invoice psswd" placeholder="Jhon Juan" name="first_name" type="text" />
+					</div>
+					<div class="mb-3 col-md-3 col-12">
+					  <label class="form-label" for="exampleFormControlInput1">Primer Apellido</label>
+					  <input class="form-control date_invoice psswd" name="surname" placeholder="López" type="text" />
+					</div>
+					<div class="mb-3 col-md-3 col-12">
+					  <label class="form-label" for="exampleFormControlInput1">Segundo Apellido</label>
+					  <input class="form-control date_invoice psswd" name="second_surname" placeholder="OPCIONAL" type="text" />
+					</div>
+					<div class="mb-4 col-md-3 col-12">
+					  <label class="form-label" for="exampleFormControlInput1">Dirección</label>
+					  <input class="form-control date_invoice psswd" name="address" placeholder="CRA 48 #87 - 95 " type="text" />
+					</div>
+					<div class="mb-4 col-md-3 col-12">
+					  <label class="form-label" for="exampleFormControlInput1">E-mail</label>
+					  <input class="form-control date_invoice psswd" name="email" placeholder="emailejemplo@ejemplo.com" type="email" />
+					</div>
+					<div class="mb-3 col-md-6 col-12">
+						<label class="form-label" for="exampleFormControlInput1">Permisos</label>
+						<select class="form-select js-choice organizerMultiple" id="" multiple="multiple" size="1" name="organizerMultiple" data-options='{"removeItemButton":true,"placeholder":true}'>
+							<option value="1" >Facturacion</option>
+							<option value="2" >Administrativo</option>
+							<option value="6" >Reportes</option>
+							<option value="3" >Editar</option>
+							<option value="4" >Eliminar</option>
+							<option value="1" >Todos</option>
+						</select>
+					</div>
+					<div class="mb-4 col-md-3 col-6">
+					  <label class="form-label" for="exampleFormControlInput1">Salario</label>
+					  <input class="form-control date_invoice psswd" name="salary" placeholder="1500000" type="number" />
+					</div>
+					<style>
+						.salary, .pension{
+							top: 6% !important;
+						}
+						@media screen and (width <= 734px) {
+							.salary, .pension{
+								top: 3% !important;
+							}
+						}
+					</style>
+					<div class="mb-4 col-md-2 col-6 salary" >
+						<input class="form-check-input date_invoice psswd" type="checkbox" id="card-checkbox" name="integral_salary"/>
+					  <label class="form-label" for="exampleFormControlInput1">Salario Integral</label>
+					</div>
+					<div class="mb-4 col-md-2 col-6 pension" >
+						<input class="form-check-input date_invoice psswd" type="checkbox" id="card-checkbox" name="high_risk_pension"/>
+					  <label class="form-label" for="exampleFormControlInput1">Pensión Alto Riesgo</label>
+					</div>
+
+					<div class="mb-3 col-md-3 col-12">
+						<label class="form-label" for="exampleFormControlInput1">Tipo de Trabajador</label>
+						<select class="form-select js-choice organizerMultiple" id="" size="1" name="type_worker_id">
+							{% for i in  type_worker %}
+								<option value="{{i.pk}}" >{{i.name}}</option>
+							{% endfor %}
+						</select>
+					</div>
+
+					<div class="mb-3 col-md-3 col-12">
+						<label class="form-label" for="exampleFormControlInput1">Tipo de Contrato</label>
+						<select class="form-select js-choice organizerMultiple" id="" size="1" name="type_contract_id">
+							{% for i in  type_contract %}
+								<option value="{{i.pk}}" >{{i.name}}</option>
+							{% endfor %}
+						</select>
+					</div>
+
+					<div class="mb-3 col-md-5 col-12">
+						<label class="form-label" for="exampleFormControlInput1">Tipo de Subcontrato</label>
+						<select class="form-select js-choice organizerMultiple" id="" size="1" name="sub_type_worker_id">
+							{% for i in  sub_type_worker %}
+								<option value="{{i.pk}}" >{{i.name}}</option>
+							{% endfor %}
+						</select>
+					</div>
+
+					<div class="mb-3 col-md-3 col-12">
+						<label class="form-label" for="exampleFormControlInput1">Tipo de Documento</label>
+						<select class="form-select js-choice organizerMultiple" id="" size="1" name="payroll_type_document_identification_id">
+							{% for i in  payroll_type_document_identification %}
+								<option value="{{i.pk}}" >{{i.name}}</option>
+							{% endfor %}
+						</select>
+					</div>
+
+					<div class="mb-3 col-md-3 col-12">
+						<label class="form-label" for="exampleFormControlInput1">Municipio</label>
+						<select class="form-select js-choice organizerMultiple" id="" size="1" name="municipality_id">
+							{% for i in  municipalities %}
+								<option value="{{i.pk}}" >{{i.name}}</option>
+							{% endfor %}
+						</select>
+					</div>
+
+					<div class="mb-4 col-md-3 col-6">
+					  <label class="form-label" for="exampleFormControlInput1">Usuario</label>
+					  <input class="form-control date_invoice psswd" name="user_name" placeholder="Nombre de usuario" type="text" />
+					</div>
+
+					<div class="mb-4 col-md-3 col-6">
+					  <label class="form-label" for="exampleFormControlInput1">Contraseña</label>
+					  <input class="form-control date_invoice psswd" name="psswd" placeholder="OPCIONAL" type="text" />
+					</div>
+
+				</div>
+				<div class="row p-2">
+					<div class="mb-3">
+						<input class="btn btn-primary save_user" type="button" value="Crear Usuario">
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</form>
+{% endblock %}
+{% block script %}
+
+	<script>
+	  $(document).ready(function () {
+	  	console.clear()
+
+	    async function time_sleep() {
+	      for (let i = 0; i < 2; i++) {
+	        console.log(`Waiting ${i} seconds...`);
+	        await sleep(i * 1000);
+	      }
+	      location.reload(true);
+	    }
+
+	    $(".save_user").click(function () {
+	    	const permissions = $(".organizerMultiple").val()
+	    	if(permissions.length > 0){
+					$.ajax({
+						data : $(".form").serialize(),
+						success: function(e){
+							result = JSON.parse(e)
+							// if(result.result){
+							// 	$.notify("Usuario creado con éxito",'success')
+							// 	time_sleep()
+							// }
+							// else{
+							// 	$.notify(result.message,'error')
+							// }
+						}
+					})
+				}
+				else{
+					$.notify("Debe elejir un permiso","error")
+				}
+	    });
+
+	    function sleep(ms) {
+	      return new Promise(resolve => setTimeout(resolve, ms));
+	    }
+
+
+	    $(".list_product").click(function(){
+	    	location.href = "{% url 'List_Employee' %}"
+	    })
+	  });
+	</script>
+
+
+{% endblock %}

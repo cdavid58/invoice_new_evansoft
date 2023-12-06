@@ -1,0 +1,201 @@
+{% extends '../base.html' %}
+{% block content %}
+
+<div class="card mb-3" data-date="{{ i.registration_date }}">
+  <div class="card-body p-2 overflow-hidden">
+    <div class="row p-1">
+      <div class="col-md-6 col-12">
+        <h5>Actualiza el usuario '{{data.user_name|title}}'.</h5>
+      </div>
+      <div class="col-md-3 ml-auto col-12 text-right">
+        <button class="btn btn-info list_product">
+        	<span class="nav-link-icon">
+        		<span class="fas fa-chevron-left"></span>
+        	</span>
+        	<span class="nav-link-text ps-1">Lista de usuarios</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<form class="data_employee">
+	<div class="card mb-3">
+		<div class="card-body">
+		  <div class="row" style="padding: 10px !important;">
+				<div class="row">
+					<div class="mb-3 col-md-3 col-12">
+					  <label class="form-label" for="exampleFormControlInput1">Tipo de trabajador</label>
+					  <select class="form-select" id="" size="1" name="type_worker_id">
+					  	<option value="{{data.pk_Type_Worker}}" >{{data.name_Type_Worker}}</option>
+							{% for i in  type_worker %}
+								{% if i.pk != data.pk_Type_Worker %}
+									<option value="{{i.pk}}" >{{i.name}}</option>
+								{% endif %}
+							{% endfor %}
+						</select>
+					</div>
+					<div class="mb-3 col-md-3 col-12">
+					  <label class="form-label" for="exampleFormControlInput1">Tipo de Contrato</label>
+					  <select class="form-select" id="" size="1" name="type_contract_id">
+					  	<option value="{{data.pk_Type_Contract}}" >{{data.name_Type_Contract}}</option>
+							{% for i in  type_contract %}
+								{% if i.pk != data.pk_Type_Contract %}
+									<option value="{{i.pk}}" >{{i.name}}</option>
+								{% endif %}
+							{% endfor %}
+						</select>
+					</div>
+					<div class="mb-3 col-md-3 col-12">
+					  <label class="form-label" for="exampleFormControlInput1">Tipo de Documento</label>
+					  <select class="form-select" id="" size="1" name="payroll_type_document_identification_id">
+					  	<option value="{{data.pk_Payroll_Type_Document_Identification}}" >{{data.name_Payroll_Type_Document_Identification}}</option>
+							{% for i in  payroll_type_document_identification %}
+								{% if i.pk != data.pk_Payroll_Type_Document_Identification %}
+									<option value="{{i.pk}}" >{{i.name}}</option>
+								{% endif %}
+							{% endfor %}
+						</select>
+					</div>
+					<div class="mb-3 col-md-2 col-12">
+					  <label class="form-label" for="exampleFormControlInput1">Número de Documento</label>
+					  <input class="form-control date_invoice psswd text-right" name="identification_number" value="{{data.identification_number}}" type="number" />
+					</div>
+					<div class="mb-3 col-md-3 col-12">
+					  <label class="form-label" for="exampleFormControlInput1">Nombres</label>
+					  <input class="form-control date_invoice psswd" name="names" value="{{data.first_name}}" type="text" />
+					</div>
+					<div class="mb-3 col-md-3 col-12">
+					  <label class="form-label" for="exampleFormControlInput1">Primer Apellido</label>
+					  <input class="form-control date_invoice psswd" name="surname" value="{{data.surname}}" type="text" />
+					</div>
+					<div class="mb-3 col-md-3 col-12">
+					  <label class="form-label" for="exampleFormControlInput1">Segundo Apellido</label>
+					  <input class="form-control date_invoice psswd" name="second_surname" value="{% if data.second_surname != '' and data.second_surname != '.' %}{{data.second_surname}}{% else %}NO TIENE{% endif %}" type="text" />
+					</div>
+					<div class="mb-3 col-md-2 col-12">
+					  <label class="form-label" for="exampleFormControlInput1">Salario</label>
+					  <input class="form-control date_invoice text-right salary" name="salary" value="{{data.salary}}" type="number" />
+					</div>
+					<div class="mb-3 col-md-3 col-12">
+					  <label class="form-label" for="exampleFormControlInput1">Correo Electrónico</label>
+					  <input class="form-control date_invoice psswd" name="email" value="{{data.email}}" type="email" />
+					</div>
+					<div class="mb-3 col-md-3 col-12">
+					  <label class="form-label" for="exampleFormControlInput1">Ususario de acceso</label>
+					  <input class="form-control date_invoice psswd" name="user_name" value="{{data.user_name}}" type="text" />
+					</div>
+					<div class="mb-3 col-md-2 col-12">
+					  <label class="form-label" for="exampleFormControlInput1">Contraseña de acceso</label>
+					  <input class="form-control date_invoice psswd" name="psswd" value="{{data.psswd}}" type="text" />
+					</div>
+					<div class="mb-3 col-md-3 col-12">
+					  <label class="form-label" for="exampleFormControlInput1">Municipio de residencia</label>
+					  <select class="form-select" id="" size="1" name="municipality_id">
+					  	<option value="{{data.pk_municipalities}}" >{{data.name_municipalities}}</option>
+							{% for i in  municipalities %}
+								{% if i.pk != data.pk_municipalities %}
+									<option value="{{i.pk}}" >{{i.name}}</option>
+								{% endif %}
+							{% endfor %}
+						</select>
+					</div>
+					<div class="mb-3 col-md-4 col-12">
+					  <label class="form-label" for="exampleFormControlInput1">Dirección</label>
+					  <input class="form-control date_invoice psswd" name="address" value="{{data.address}}" type="text" />
+					</div>
+					<div class="mb-3 col-md-4 col-12">
+						<label class="form-label" for="exampleFormControlInput1">Permisos</label>
+						<select class="form-select js-choice permissions" id="" multiple="multiple" size="1" name="permissions" data-options='{"removeItemButton":true,"placeholder":true}'>
+							{% for i in permission %}
+							  <option value="{{ i.pk_permission }}" {% if i.name in list_permission %}selected{% endif %}>{{ i.name }}</option>
+							{% endfor %}
+						</select>
+					</div>
+				</div>
+				<div class="row p-1">
+					<div class="mb-3">
+						<input class="btn btn-primary save_user" type="button" value="Actualizar Usuario">
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</form>
+{% endblock %}
+{% block script %}
+
+	<script>
+	  $(document).ready(function () {
+	  	console.clear()
+	    $(".cat").change(function () {
+	      const id = $(this).val();
+	      $.ajax({
+	        url: "{% url 'Get_Subcategory' %}",
+	        data: { 'pk_category': id },
+	        success: function (e) {
+	          const obj = JSON.parse(e);
+	          const subcSelect = $(".subc");
+	          subcSelect.empty();
+	          obj.forEach(function (item) {
+	            subcSelect.append(`<option value="${item.pk_subcat}">${item.name}</option>`);
+	          });
+	          subcSelect.removeAttr("disabled");
+	        }
+	      });
+	    });
+
+	    async function time_sleep() {
+	      for (let i = 0; i < 2; i++) {
+	        console.log(`Waiting ${i} seconds...`);
+	        await sleep(i * 1000);
+	      }
+	      location.reload(true);
+	    }
+
+	    $(".save_user").click(function () {
+	    	const permissions = $(".permissions").val()
+	    	var formData = {};
+	    	$(".data_employee input, .data_employee select").each(function() {
+	        var name = $(this).attr("name");
+	        var value = $(this).val();
+	        formData[name] = value;
+	      });
+	      var jsonData = JSON.stringify(formData);
+	      console.log(jsonData);
+	    	if(permissions.length > 0){
+					$.ajax({
+						url:"{% url 'Update_Data_Employee' %}",
+						data : {
+							'data':jsonData,
+						},
+						success: function(e){
+							result = JSON.parse(e)
+							if(result.result){
+								$.notify("Usuario actualizado con éxito",'success')
+							}
+							else{
+								$.notify(result.message,'error')
+							}
+						}
+					})
+				}
+				else{
+					$.notify("Debe elejir un permiso","error")
+				}
+	    });
+
+	    function sleep(ms) {
+	      return new Promise(resolve => setTimeout(resolve, ms));
+	    }
+
+
+	    $(".list_product").click(function(){
+	    	location.href = "{% url 'List_Employee' %}"
+	    })
+
+	    $()
+	  });
+	</script>
+
+
+{% endblock %}

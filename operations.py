@@ -21,6 +21,22 @@ class AuthenticationUser:
 			print("Error")
 		return json.dumps({'result': values['result'], 'message': values['message']})
 
+
+	def Get_List_User(self):
+		response = requests.request("GET", env.GET_LIST_EMPLOYEE, headers= self.headers, data=json.dumps({'pk_employee': self.request.session['pk_employee']}))
+		return json.loads(response.text)
+
+	def LogOut(self):
+		response = requests.request("PUT", env.LOGOUT, headers= self.headers, data=json.dumps({'pk_employee': self.request.session['pk_employee']}))
+		return json.loads(response.text)
+
+	def Get_Employee(self,pk):
+		response = requests.request("GET", env.GET_EMPLOYEE, headers= self.headers, data=json.dumps({'pk_employee': pk}))
+		return json.loads(response.text)
+	def Update_User(self, data):
+		response = requests.request("PUT", env.UPDATE_USER, headers=self.headers, data=json.dumps(data))
+		return json.dumps(json.loads(response.text))
+
 class Supplier:
 	def __init__(self,request):
 		self.headers = {'Content-Type': 'application/json'}
@@ -151,7 +167,37 @@ class Invoice:
 		return json.dumps(json.loads(response.text))
 
 
+	def Get_Invoice(self, pk):
+		response = requests.request("GET", env.GET_INVOICE, headers= self.headers, data=json.dumps({'pk_invoice':pk}))
+		return json.loads(response.text)
 
+class Setting:
+	def __init__(self,request):
+		self.headers = {'Content-Type': 'application/json'}
+		self.request = request
 
+	def Get_Data(self, url):
+		response = requests.request("GET", url, headers= self.headers, data={})
+		return json.loads(response.text)
 
+class Customer:
+	def __init__(self,request):
+		self.headers = {'Content-Type': 'application/json'}
+		self.request = request
 
+	def Get_List_Customer(self):
+		response = requests.request("GET", env.GET_LIST_CUSTOMER, headers=self.headers, data=json.dumps({"pk_employee": self.request.session['pk_employee']}))
+		return json.loads(response.text)
+
+	def Get_Customer(self,pk):
+		response = requests.request("GET", env.GET_CUSTOMER, headers=self.headers, data=json.dumps({"pk_customer": pk}))
+		return json.loads(response.text)
+
+	def Update_Customer(self,data):
+		response = requests.request("PUT", env.UPDATE_CUSTOMER, headers=self.headers, data=json.dumps(data))
+		print(json.loads(response.text))
+		return json.dumps(json.loads(response.text))
+
+	def Create_Customer(self, data):
+		response = requests.request("PUT", env.CREATE_CUSTOMER, headers=self.headers, data=json.dumps(data))
+		return json.dumps(json.loads(response.text))

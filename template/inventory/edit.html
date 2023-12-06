@@ -177,10 +177,7 @@
 	    	value_price = parseInt($(this).val())
 	    	value_cost = parseInt($(".cost").val())
 	    	if(value_price >= value_cost){
-	    		console.log("Entre")
 		    	price = ((( value_price - value_cost ) / value_price) * 100).toFixed(1)
-		    	console.log(value_price)
-		    	console.log(value_cost)
 		    	$(".percentage"+id).val(price+'%')
 		    }
 		    else{

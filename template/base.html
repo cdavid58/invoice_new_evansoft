@@ -198,6 +198,23 @@
 
       $(document).ready(function(){
         url_path = '{{request.session.url}}'
+
+        $(".logout").click(function(){
+          $.ajax({
+            url:"{% url 'LogOut' %}",
+            success:function(e){
+              e = JSON.parse(e)
+              if(e.result){
+                location.href = "{% url 'Login' %}"
+              }
+              else{
+                noti_person("ERROR", "Error en el cierre de la sessión")
+              }
+            }
+          })
+        })
+
+
       })
     </script>
     

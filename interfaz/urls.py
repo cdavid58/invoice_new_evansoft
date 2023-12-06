@@ -15,6 +15,7 @@ urlpatterns = [
     url(r'^inventory/', include('inventory.urls')),
     url(r'^shopping/', include('shopping.urls')),
     url(r'^invoice/', include('invoice.urls')),
+    url(r'^client/', include('client.urls')),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)

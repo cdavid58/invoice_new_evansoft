@@ -158,6 +158,11 @@
                     body: "Usuario o constraseña incorrecta."
                   })    
                 }
+                else{
+                  var notification = new Notification("INFORMACIÓN", {
+                    body: e.message
+                  })
+                }
               }
               
             }

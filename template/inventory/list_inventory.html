@@ -126,6 +126,7 @@
 {% block script %}
   <script>
     $(document).ready(function(){
+      console.clear()
       $(".searchInput").on("input", function() {
         var searchText = $(this).val().toLowerCase();
         $("table tbody tr").each(function() {

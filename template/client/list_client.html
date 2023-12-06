@@ -1,0 +1,149 @@
+{% extends '../base.html' %}
+{% load static %}
+{% block content %}
+
+<form enctype="multipart/form-data" class="update_inventory_excel">
+  <input type="file" class="data_inventory" accept=".xls, .xlsx" hidden>
+</form>
+
+
+<div class="card mb-3" data-date="{{ i.registration_date }}">
+  <div class="card-body p-2 overflow-hidden">
+    <div class="row">
+      <div class="col-md-3 mb-3 col-12">
+        <h4>Lista de Producto</h4>
+      </div>
+      <div class="col-md-7 col-12 ml-auto">
+        {% for i in request.session.permission %}
+          {% if i == "Creador" or i == "Todos" %}
+            <button class="btn btn-primary add_customer col-md-3 col-12 mb-3">Crear Cliente</button>
+          {% endif %}
+        {% endfor %}   
+      </div>
+    </div>
+  </div>
+</div>
+<input type="text" id="searchInput" placeholder="Buscar producto..."  autofocus class="form-control form-control-sm mb-2 searchInput">
+
+<div class="card" data-date="{{ i.registration_date }}">
+  <div class="card-body p-2 overflow-hidden">
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th class="text-dark fs-0">CC / NIT</th>
+            <th class="text-dark">Razón Social</th>
+            <th class="text-dark">Teléfono</th>
+            <th class="text-dark">Dirección</th>
+            <th class="text-dark">E-Mail</th>
+            {% if request.session.permission %}
+              {% for j in request.session.permission %}
+                {% if j == "Editor" or j == "Todos" or j == "Eliminador"%}
+                  <th class="text-dark">Acciones</th>
+                {% endif %}
+              {% endfor %}
+            {% endif %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for i in page_obj %}
+            <tr>
+              <td class="cc_nit">{{i.identification_number}}</td>
+              <td class="razon_social">{{i.name}}</td>
+              <td>{{i.phone}}</td>
+              <td>{{i.address|truncatechars:20}}</td>
+              <td>{{i.email|truncatechars:20}}</td>
+              <td>
+                {% for j in request.session.permission %}
+                  {% if j == "Editor" or j == "Todos" %}
+                    <a href="{% url 'Edit_Customer' i.pk_customer %}" class="btn btn-primary edit" id="{{i.code}}">Editar</a>
+                  {% endif %}
+                  {% if j == "Eliminador" or j == "Todos" %}
+                    <button class="btn btn-danger delete" id="{{i.code}}">Eliminar</button>
+                  {% endif %}
+                {% endfor %}              
+              </td>            
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+{% if page_obj.has_other_pages %}
+  <div class="card-footer border-top d-flex justify-content-center">
+      {% if page_obj.has_previous %}
+        <a class="btn btn-falcon-default btn-sm me-2" href="?page=1" data-bs-toggle="tooltip" data-bs-placement="top" title="First">
+            <span class="fas fa-chevron-left"></span>
+        </a>
+      {% endif %}
+      {% for num in page_range %}
+        {% if page_obj.number == num %}
+          <a class="btn btn-sm btn-falcon-default me-2 active">{{ num }}</a>
+        {% else %}
+          <a class="btn btn-sm btn-falcon-default me-2" href="?page={{ num }}">{{ num }}</a>
+        {% endif %}
+      {% endfor %}
+      {% if page_obj.has_next %}
+        <a class="btn btn-falcon-default btn-sm" href="?page={{ page_obj.paginator.num_pages }}" data-bs-toggle="tooltip" data-bs-placement="top" title="Last">
+            <span class="fas fa-chevron-right"></span>
+        </a>
+      {% endif %}
+  </div>
+{% endif %}
+
+{% endblock %}
+{% block script %}
+
+  <script>
+    $(document).ready(function(){
+
+      console.clear()
+
+      $(".searchInput").on("input", function() {
+        var searchText = $(this).val().toLowerCase();
+        $("table tbody tr").each(function() {
+          var ccNitText = $(this).find(".cc_nit").text().toLowerCase();
+          var razonSocialText = $(this).find(".razon_social").text().toLowerCase();
+          if (ccNitText.includes(searchText) || razonSocialText.includes(searchText)) {
+            $(this).show();
+          } else {
+            $(this).hide();
+          }
+        });
+      });
+
+
+
+
+      $('.add_customer').click(function(){
+        location.href = "{% url 'Create_Customer' %}"
+      })
+
+      $(document).on('click','.edit',function(){
+        id = this.id
+        location.href = '{{request.session.url}}/client/Edit_Client/'+id
+      })
+
+      $(document).on('click','.delete',function(){
+        $(this).closest('tr').remove();
+        id = this.id
+        $.ajax({
+          data:{'pk_client':id},
+          success: function(e){
+            data = JSON.parse(e)
+            if(data.result){
+              $.notify("Cliente eliminado con éxito",'success')
+            }
+            else{
+             $.notify(data.message,'error') 
+            }
+          }
+        })
+      })
+
+    })
+  </script>
+
+{% endblock %}

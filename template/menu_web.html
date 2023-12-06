@@ -22,21 +22,22 @@
     <div class="navbar-vertical-content scrollbar">
       <ul class="navbar-nav flex-column mb-3" id="navbarVerticalNav">
         <li class="nav-item">
-             <div class="row navbar-vertical-label-wrapper mt-3 mb-2">
-                <div class="col-auto navbar-vertical-label">Operaciones</div>
-                <div class="col ps-0">
-                  <hr class="mb-0 navbar-vertical-divider" />
-                </div>
-            </div>
+             
             {% if request.session.permission %}
                 {% for i in request.session.permission %}
                     {% if i == "Facturacion"  or i == "Todos" %}
+                        <div class="row navbar-vertical-label-wrapper mt-3 mb-2">
+                            <div class="col-auto navbar-vertical-label">Operaciones</div>
+                            <div class="col ps-0">
+                              <hr class="mb-0 navbar-vertical-divider" />
+                            </div>
+                        </div>
                         <a class="nav-link dropdown-indicator" href="#events" role="button" data-bs-toggle="collapse" aria-expanded="false" aria-controls="events">
                             <div class="d-flex align-items-center"><span class="nav-link-icon"><span class="far fa-file-alt"></span></span><span class="nav-link-text ps-1">Crear Documentos</span>
                             </div>
                         </a>
                         <ul class="nav collapse false" id="events">
-                            <li class="nav-item"><a class="nav-link" href="javascript:void(0);" aria-expanded="false">
+                            <li class="nav-item"><a class="nav-link" href="{% url 'Create_Invoice' %}" aria-expanded="false">
                                 <div class="d-flex align-items-center"><span class="nav-link-text ps-1">Factura</span>
                                 </div>
                               </a>
@@ -93,7 +94,7 @@
                   <hr class="mb-0 navbar-vertical-divider" />
                 </div>
             </div>
-            <a class="nav-link" href="" >
+            <a class="nav-link" href="{% url 'Get_List_Customer' %}" >
                 <div class="d-flex align-items-center">
                     <span class="nav-link-icon">
                         <span class="fas fa-users"></span>
@@ -128,12 +129,12 @@
                                 <span class="nav-link-text ps-1">Inventario</span>
                             </div>
                         </a>
-                        <a class="nav-link" href="javascript:void(0);" >
+                        <a class="nav-link" href="{% url 'List_Employee' %}" >
                             <div class="d-flex align-items-center">
                                 <span class="nav-link-icon">
                                     <span class="far fa-user"></span>
                                 </span>
-                                <span class="nav-link-text ps-1">Usuarios</span>
+                                <span class="nav-link-text ps-1">Empleados</span>
                             </div>
                         </a>
                         

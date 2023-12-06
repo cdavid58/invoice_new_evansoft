@@ -1,0 +1,142 @@
+{% extends '../base.html' %}
+{% block content %}
+
+
+<div class="card mb-3" data-date="{{ i.registration_date }}">
+  <div class="card-body p-2 overflow-hidden">
+    <div class="row p-1">
+      <div class="col-md-6 col-12">
+        <h5>Editar el cliente {{client.name}}.</h5>
+      </div>
+      <div class="col-md-3 ml-auto col-12 text-right">
+        <button class="btn btn-info List_Client">
+        	<span class="nav-link-icon">
+        		<span class="fas fa-chevron-left"></span>
+        	</span>
+        	<span class="nav-link-text ps-1">Lista de clientes</span>  
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<form class="data_customer">
+	<div class="card mb-3">
+		<div class="card-body">
+		  <div class="row" style="padding: 10px !important;">
+				<div class="row">
+					<div class="mb-3 col-md-2 col-12">
+					  <label class="form-label" for="exampleFormControlInput1">CC / NIT</label>
+					  <input class="form-control date_invoice text-right identification_number" value="{{data.identification_number}}" name="identification_number" autofocus type="number" />
+					</div>
+					<div class="mb-3 col-md-4 col-12">
+					  <label class="form-label" for="exampleFormControlInput1">Razón Social</label>
+					  <input class="form-control date_invoice name" value="{{data.name}}" name="name" type="text" />
+					</div>
+					<div class="mb-3 col-md-4 col-12">
+					  <label class="form-label" for="exampleFormControlInput1">E-mail Principal</label>
+					  <input class="form-control date_invoice name" value="{{data.email}}" name="email" type="email" />
+					</div>
+					<div class="mb-3 col-md-4 col-12">
+					  <label class="form-label" for="exampleFormControlInput1">E-mail Opcional</label>
+					  <input class="form-control date_invoice name" value="{% if data.email_optional %}{{data.email_optional}}{% else %}NO TIENE{% endif %}" name="email_optional" type="email" />
+					</div>
+					<div class="mb-3 col-md-3 col-12">
+					  <label class="form-label" for="exampleFormControlInput1">Teléfono Principal</label>
+					  <input class="form-control date_invoice name" value="{{data.phone}}" name="phone" type="number" />
+					</div>
+					<div class="mb-3 col-md-4 col-12">
+					  <label class="form-label" for="exampleFormControlInput1">Dirección</label>
+					  <input class="form-control date_invoice name" value="{{data.address}}" name="address" type="text" />
+					</div>
+					<div class="mb-3 col-md-3 col-12">
+						<label class="form-label" for="exampleFormControlInput1">Municipios</label>
+						<select class="form-select js-choice organizerMultiple" id="" name="municipality_id" data-options='{"removeItemButton":true,"placeholder":true}'>
+							<option value="{{data.municipality}}">{{data.name_municipality}}</option>
+							{% for i in municipalities %}
+								{% if i.pk != data.municipality %}
+									<option value="{{i.pk}}">{{i.name}}</option>
+								{% endif %}
+							{% endfor %}
+						</select>
+					</div>
+					<div class="mb-3 col-md-4 col-12">
+						<label class="form-label" for="exampleFormControlInput1">Tipo de documento</label>
+						<select class="form-select js-choice organizerMultiple" id="" name="type_document_identification_id" data-options='{"removeItemButton":true,"placeholder":true}'>
+							<option value="{{data.type_document_i}}">{{data.name_type_document_i}}</option>
+							{% for i in Get_Type_Document_I %}
+								{% if i.pk != data.type_document_i %}
+									<option value="{{i.pk}}">{{i.name}}</option>
+								{% endif %}
+							{% endfor %}
+						</select>
+					</div>
+					<div class="mb-3 col-md-3 col-12">
+						<label class="form-label" for="exampleFormControlInput1">Tipo de Organizacion</label>
+						<select class="form-select js-choice organizerMultiple" id="" name="type_organization_id" data-options='{"removeItemButton":true,"placeholder":true}'>
+							<option value="{{data.type_organization}}">{{data.name_type_organization}}</option>
+							{% for i in Get_Type_Organization %}
+								{% if i.pk != data.type_organization %}
+									<option value="{{i.pk}}">{{i.name}}</option>
+								{% endif %}
+							{% endfor %}
+						</select>
+					</div>
+					<div class="mb-3 col-md-4 col-12">
+						<label class="form-label" for="exampleFormControlInput1">Tipo de Regimen</label>
+						<select class="form-select js-choice organizerMultiple" id="" name="type_regime_id" data-options='{"removeItemButton":true,"placeholder":true}'>
+							<option value="{{data.type_regime}}">{{data.name_type_regime}}</option>
+							{% for i in Get_Type_Regimen %}
+								{% if i.pk != data.type_regime %}
+									<option value="{{i.pk}}">{{i.name}}</option>
+								{% endif %}
+							{% endfor %}
+						</select>
+					</div>
+				</div>
+				<div class="row p-1">
+					<div class="mb-3">
+						<input class="btn btn-primary update_client" type="button" value="Actualizar Cliente">
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</form>
+{% endblock %}
+{% block script %}
+
+	<script>
+	  $(document).ready(function () {
+	  	console.clear()
+
+	    $(".update_client").click(function () {
+	    	var formData = {};
+	    	$(".data_customer input, .data_customer select").each(function() {
+	        var name = $(this).attr("name");
+	        var value = $(this).val();
+	        formData[name] = value;
+	      });
+	      var jsonData = JSON.stringify(formData)
+				$.ajax({
+					data : {'data':jsonData},
+					success: function(e){
+						e = JSON.parse(e)
+						if(e.result){
+							$.notify("Cliente actualizado con éxito",'success')
+						}
+						else{
+							$.notify(e.message,'error')
+						}
+					}
+				})
+	    });
+
+	    $(".List_Client").click(function(){
+	    	location.href = "{% url 'Get_List_Customer' %}"
+	    })
+	  });
+	</script>
+
+
+{% endblock %}
