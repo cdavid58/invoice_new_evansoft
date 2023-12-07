@@ -79,25 +79,35 @@
 
 {% if page_obj.has_other_pages %}
   <div class="card-footer border-top d-flex justify-content-center">
-      {% if page_obj.has_previous %}
-        <a class="btn btn-falcon-default btn-sm me-2" href="?page=1" data-bs-toggle="tooltip" data-bs-placement="top" title="First">
-            <span class="fas fa-chevron-left"></span>
-        </a>
-      {% endif %}
-      {% for num in page_range %}
-        {% if page_obj.number == num %}
-          <a class="btn btn-sm btn-falcon-default me-2 active">{{ num }}</a>
-        {% else %}
-          <a class="btn btn-sm btn-falcon-default me-2" href="?page={{ num }}">{{ num }}</a>
-        {% endif %}
+    {% if page_obj.has_previous %}
+      <a class="btn btn-falcon-default btn-sm me-2" href="?page=1" data-bs-toggle="tooltip" data-bs-placement="top" title="First">
+        <span class="fas fa-chevron-left"></span>
+      </a>
+    {% endif %}
+    
+    {% if page_obj.paginator.num_pages <= 3 %}
+      {% for num in page_obj.paginator.page_range %}
+        <a class="btn btn-sm btn-falcon-default me-2 {% if num == page_obj.number %}active{% endif %}" href="?page={{ num }}">{{ num }}</a>
       {% endfor %}
-      {% if page_obj.has_next %}
-        <a class="btn btn-falcon-default btn-sm" href="?page={{ page_obj.paginator.num_pages }}" data-bs-toggle="tooltip" data-bs-placement="top" title="Last">
-            <span class="fas fa-chevron-right"></span>
-        </a>
+    {% else %}
+      {% if page_obj.number > 1 %}
+        <a class="btn btn-sm btn-falcon-default me-2" href="?page={{ page_obj.number|add:'-1' }}">{{ page_obj.number|add:"-1" }}</a>
       {% endif %}
+      <a class="btn btn-sm btn-falcon-default me-2 active" href="?page={{ page_obj.number }}">{{ page_obj.number }}</a>
+      {% if page_obj.number < page_obj.paginator.num_pages %}
+        <a class="btn btn-sm btn-falcon-default me-2" href="?page={{ page_obj.number|add:'1' }}">{{ page_obj.number|add:"1" }}</a>
+      {% endif %}
+    {% endif %}
+
+    {% if page_obj.has_next %}
+      <a class="btn btn-falcon-default btn-sm" href="?page={{ page_obj.paginator.num_pages }}" data-bs-toggle="tooltip" data-bs-placement="top" title="Last">
+        <span class="fas fa-chevron-right"></span>
+      </a>
+    {% endif %}
   </div>
 {% endif %}
+
+
 
 <button class="btn btn-primary question_excel_inventory" type="button" data-bs-toggle="modal" hidden data-bs-target="#invent_excel">Launch demo modal</button>
 <div class="modal fade" id="invent_excel" tabindex="-1" role="dialog" aria-hidden="true">
@@ -197,6 +207,7 @@
           data: {csrfmiddlewaretoken: '{{ csrf_token }}','data':List_product_excel},
           success:function(e){
             _e = JSON.parse(e)
+            console.log(_e)
             if(_e.result){
               $(".close_inventory").click()
               noti_person("Tarea Finalizada", "Ya tu inventario fue montado con existo")

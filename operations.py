@@ -199,5 +199,9 @@ class Customer:
 		return json.dumps(json.loads(response.text))
 
 	def Create_Customer(self, data):
-		response = requests.request("PUT", env.CREATE_CUSTOMER, headers=self.headers, data=json.dumps(data))
+		response = requests.request("POST", env.CREATE_CUSTOMER, headers=self.headers, data=json.dumps(data))
+		return json.dumps(json.loads(response.text))
+
+	def Delete_Client(self):
+		response = requests.request("DELETE", env.DELETE_CLIENT, headers=self.headers, data=json.dumps({"pk_customer": self.request.GET['pk_customer']}))
 		return json.dumps(json.loads(response.text))

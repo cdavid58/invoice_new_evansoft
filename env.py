@@ -51,6 +51,7 @@ GET_LIST_CUSTOMER = f"{URL_IN_USE}/customer/Get_List_Customer/"
 GET_CUSTOMER = f"{URL_IN_USE}/customer/Get_Customer/"
 UPDATE_CUSTOMER = f"{URL_IN_USE}/customer/Update_Customer/"
 CREATE_CUSTOMER = f"{URL_IN_USE}/customer/Create_Customer/"
+DELETE_CLIENT = f"{URL_IN_USE}/customer/Delete_Client/"
 
 #INVOICE
 

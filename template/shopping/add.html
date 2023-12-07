@@ -162,7 +162,6 @@
           data: {'pk_supplier':$(this).val()},
           success: function(e){
             list_product = JSON.parse(e)
-            console.log(e)
             if(list_product.length > 0){
               $(".list_product").empty()
               $(".list_product").append("<option value='0' disabled selected>Seleccione Producto..</option>")

@@ -59,7 +59,7 @@
                     <a href="{% url 'Edit_Customer' i.pk_customer %}" class="btn btn-primary edit" id="{{i.code}}">Editar</a>
                   {% endif %}
                   {% if j == "Eliminador" or j == "Todos" %}
-                    <button class="btn btn-danger delete" id="{{i.code}}">Eliminar</button>
+                    <button class="btn btn-danger delete" id="{{i.pk_customer}}">Eliminar</button>
                   {% endif %}
                 {% endfor %}              
               </td>            
@@ -121,16 +121,12 @@
         location.href = "{% url 'Create_Customer' %}"
       })
 
-      $(document).on('click','.edit',function(){
-        id = this.id
-        location.href = '{{request.session.url}}/client/Edit_Client/'+id
-      })
-
       $(document).on('click','.delete',function(){
         $(this).closest('tr').remove();
         id = this.id
         $.ajax({
-          data:{'pk_client':id},
+          url:"{% url 'Delete_Client' %}",
+          data:{'pk_customer':id},
           success: function(e){
             data = JSON.parse(e)
             if(data.result){

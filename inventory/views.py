@@ -5,7 +5,7 @@ from operations import Inventory, Supplier
 
 def Get_List_Products(request):
 	data = Inventory(request).Get_List_Products()
-	items_per_page = 20
+	items_per_page = 10
 	paginator = Paginator(data, items_per_page)
 	page_number = request.GET.get('page')
 	page_obj = paginator.get_page(page_number)
@@ -25,13 +25,16 @@ def Load_Inventory_Excel(request):
 	if request.is_ajax():
 		import json
 		result = None
+		excel = 1
 		for i in json.loads(request.POST['data']):
 			for j in i:
 				_data = j
 				_data['pk_subcategory'] = 1
-				_data['pk_supplier'] = 2
+				_data['pk_supplier'] = 6
 				request.GET = j
-				result = Inventory(request).Create_Product(excel = 1)
+				result = Inventory(request).Create_Product(excel = excel)
+				print(result)
+				excel = 0
 		return HttpResponse(result)
 
 def Delete_Product(request):

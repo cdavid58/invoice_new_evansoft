@@ -29,14 +29,16 @@ def Edit_Customer(request,pk):
 		'municipalities': s.Get_Data(env.GET_MUNICIPALITIES)
 		})
 
+def Delete_Client(request):
+	if request.is_ajax():
+		return HttpResponse(Customer(request).Delete_Client())
 
 def Create_Customer(request):
 	if request.is_ajax():
 		data_str = request.GET.get('data', '{}')
 		data = json.loads(data_str)
 		data['pk_employee'] = request.session['pk_employee']
-		return HttpResponse(Customer(request).Update_Customer(data))
-
+		return HttpResponse(Customer(request).Create_Customer(data))
 	s = Setting(request)
 	return render(request,'client/add.html',{
 		'Get_Type_Regimen': s.Get_Data(env.GET_TYPE_REGIMEN),
