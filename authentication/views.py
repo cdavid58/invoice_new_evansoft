@@ -32,12 +32,14 @@ def List_Employee(request):
 def Create_Employee(request):
 	s = Setting(request)
 	if request.is_ajax():
-		data = request.GET.copy()
+		data_str = request.GET.get('data', '{}')
+		data = json.loads(data_str)
+		data['pk_employee'] = request.session['pk_employee']
 		if "high_risk_pension" not in data:
-			data['high_risk_pension'] = None
+			data['high_risk_pension'] = False
 		if 'integral_salary' not in data:
-			data['integral_salary'] = None
-		return HttpResponse(True)
+			data['integral_salary'] = False
+		return HttpResponse(AuthenticationUser(request).Create_Employee(data))
 	return render(request,'user/add.html',{
 		'type_worker': s.Get_Data(env.GET_TYPE_WORKER),
 		'type_contract': s.Get_Data(env.GET_TYPE_CONTRACT),
@@ -68,3 +70,8 @@ def Update_Data_Employee(request):
 		data = json.loads(data_str)
 		data['pk_employee'] = request.session['pk_employee']
 		return HttpResponse(AuthenticationUser(request).Update_User(data))
+
+
+def Delete_Employee(request):
+	if request.is_ajax():
+		return HttpResponse(AuthenticationUser(request).Delelete_User(request.GET))

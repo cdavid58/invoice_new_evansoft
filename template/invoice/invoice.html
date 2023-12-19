@@ -90,11 +90,11 @@
                 <h6 class="mb-0 text-nowrap">{{i.name}}</h6>
               </td>
               <td class="align-middle text-center">{{i.quantity}}</td>
-              <td class="align-middle text-end">${{i.cost|floatformat:2 }}</td>
+              <td class="align-middle text-end">${{i.price|floatformat:2 }}</td>
               <td class="align-middle text-end">${{i.tax|floatformat:2}}</td>
               <td class="align-middle text-end">${{i.ipo|floatformat:2}}</td>
               <td class="align-middle text-end">${{i.discount|floatformat:2}}</td>
-              <td class="align-middle text-end">${{i.price|floatformat:2}}</td>
+              <td class="align-middle text-end">${{i.subtotals|floatformat:2}}</td>
             </tr>
           {% endfor %}
         </tbody>
@@ -119,14 +119,14 @@
             <th class="text-900">Descuento:</th>
             <td class="fw-semi-bold">${{discount|floatformat:2}}</td>
           </tr>
+          <tr>
+            <th class="text-900">Abonado:</th>
+            <td class="fw-semi-bold">$0.00</td>
+          </tr>
           <tr class="border-top">
             <th class="text-900">Total:</th>
-            <td class="fw-semi-bold">${{data.total|floatformat:2}}</td>
+            <td class="fw-semi-bold">${{totals|floatformat:2}}</td>
           </tr>
-          <!-- <tr class="border-top border-top-2 fw-bolder text-900">
-            <th>Amount Due:</th>
-            <td>$19688.40</td>
-          </tr> -->
         </table>
       </div>
     </div>

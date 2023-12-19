@@ -8,4 +8,5 @@ urlpatterns=[
 	url(r'^Create_Employee/$',Create_Employee,name="Create_Employee"),
 	url(r'^Get_Employee/(\d+)/$',Get_Employee,name="Get_Employee"),
 	url(r'^Update_Data_Employee/$',Update_Data_Employee,name="Update_Data_Employee"),
+	url(r'^Delete_Employee/$',Delete_Employee,name="Delete_Employee"),
 ]

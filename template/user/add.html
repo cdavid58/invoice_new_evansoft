@@ -18,38 +18,38 @@
     </div>
   </div>
 </div>
-<form class="form">
+<form class="form data_employee">
 	<div class="card mb-3">
 		<div class="card-body">
 		  <div class="row" style="padding: 10px !important;">
 				<div class="row">
 					<div class="mb-3 col-md-2 col-12">
 					  <label class="form-label" for="exampleFormControlInput1">CC / NIT</label>
-					  <input class="form-control date_invoice username" name="identification_number" autofocus type="number" />
+					  <input class="form-control username" name="identification_number" autofocus type="number" />
 					</div>
 					<div class="mb-3 col-md-3 col-12">
 					  <label class="form-label" for="exampleFormControlInput1">Nombres</label>
-					  <input class="form-control date_invoice psswd" placeholder="Jhon Juan" name="first_name" type="text" />
+					  <input class="form-control psswd" placeholder="Jhon Juan" name="first_name" type="text" />
 					</div>
 					<div class="mb-3 col-md-3 col-12">
 					  <label class="form-label" for="exampleFormControlInput1">Primer Apellido</label>
-					  <input class="form-control date_invoice psswd" name="surname" placeholder="López" type="text" />
+					  <input class="form-control psswd" name="surname" placeholder="López" type="text" />
 					</div>
 					<div class="mb-3 col-md-3 col-12">
 					  <label class="form-label" for="exampleFormControlInput1">Segundo Apellido</label>
-					  <input class="form-control date_invoice psswd" name="second_surname" placeholder="OPCIONAL" type="text" />
+					  <input class="form-control psswd" name="second_surname" placeholder="OPCIONAL" type="text" />
 					</div>
 					<div class="mb-4 col-md-3 col-12">
 					  <label class="form-label" for="exampleFormControlInput1">Dirección</label>
-					  <input class="form-control date_invoice psswd" name="address" placeholder="CRA 48 #87 - 95 " type="text" />
+					  <input class="form-control psswd" name="address" placeholder="CRA 48 #87 - 95 " type="text" />
 					</div>
 					<div class="mb-4 col-md-3 col-12">
 					  <label class="form-label" for="exampleFormControlInput1">E-mail</label>
-					  <input class="form-control date_invoice psswd" name="email" placeholder="emailejemplo@ejemplo.com" type="email" />
+					  <input class="form-control psswd" name="email" placeholder="email@ejemplo.com" type="email" />
 					</div>
 					<div class="mb-3 col-md-6 col-12">
 						<label class="form-label" for="exampleFormControlInput1">Permisos</label>
-						<select class="form-select js-choice organizerMultiple" id="" multiple="multiple" size="1" name="organizerMultiple" data-options='{"removeItemButton":true,"placeholder":true}'>
+						<select class="form-select js-choice organizerMultiple permissions" id="" multiple="multiple" size="1" name="permissions" data-options='{"removeItemButton":true,"placeholder":true}'>
 							<option value="1" >Facturacion</option>
 							<option value="2" >Administrativo</option>
 							<option value="6" >Reportes</option>
@@ -60,7 +60,7 @@
 					</div>
 					<div class="mb-4 col-md-3 col-6">
 					  <label class="form-label" for="exampleFormControlInput1">Salario</label>
-					  <input class="form-control date_invoice psswd" name="salary" placeholder="1500000" type="number" />
+					  <input class="form-control psswd" name="salary" placeholder="1500000" type="number" />
 					</div>
 					<style>
 						.salary, .pension{
@@ -73,11 +73,11 @@
 						}
 					</style>
 					<div class="mb-4 col-md-2 col-6 salary" >
-						<input class="form-check-input date_invoice psswd" type="checkbox" id="card-checkbox" name="integral_salary"/>
+						<input class="form-check-input psswd" type="checkbox" id="card-checkbox" name="integral_salary"/>
 					  <label class="form-label" for="exampleFormControlInput1">Salario Integral</label>
 					</div>
 					<div class="mb-4 col-md-2 col-6 pension" >
-						<input class="form-check-input date_invoice psswd" type="checkbox" id="card-checkbox" name="high_risk_pension"/>
+						<input class="form-check-input psswd"type="checkbox" id="card-checkbox" name="high_risk_pension"/>
 					  <label class="form-label" for="exampleFormControlInput1">Pensión Alto Riesgo</label>
 					</div>
 
@@ -149,8 +149,8 @@
 {% endblock %}
 {% block script %}
 
-	<script>
-	  $(document).ready(function () {
+<script>
+	 $(document).ready(function () {
 	  	console.clear()
 
 	    async function time_sleep() {
@@ -162,26 +162,46 @@
 	    }
 
 	    $(".save_user").click(function () {
-	    	const permissions = $(".organizerMultiple").val()
-	    	if(permissions.length > 0){
-					$.ajax({
-						data : $(".form").serialize(),
-						success: function(e){
-							result = JSON.parse(e)
-							// if(result.result){
-							// 	$.notify("Usuario creado con éxito",'success')
-							// 	time_sleep()
-							// }
-							// else{
-							// 	$.notify(result.message,'error')
-							// }
-						}
-					})
-				}
-				else{
-					$.notify("Debe elejir un permiso","error")
-				}
-	    });
+		    const permissions = $(".permissions").val();
+		    var formData = {};
+
+		    $(".data_employee input, .data_employee select").each(function() {
+		        var name = $(this).attr("name");
+		        var value;
+
+		        if ($(this).is(":checkbox")) {
+		            value = $(this).is(":checked") ? "on" : undefined;
+		        } else {
+		            value = $(this).val();
+		        }
+
+		        if (value !== undefined) {
+		            formData[name] = value;
+		        }
+		    });
+
+		    var jsonData = JSON.stringify(formData);
+		    console.log(jsonData);
+
+		    if (permissions.length > 0) {
+		        $.ajax({
+		            url: "{% url 'Create_Employee' %}",
+		            data: {"data": jsonData},
+		            success: function(e) {
+		                result = JSON.parse(e);
+		                if (result.result) {
+		                    $.notify("Usuario creado con éxito", 'success');
+		                    time_sleep();
+		                } else {
+		                    $.notify(result.message, 'error');
+		                }
+		            }
+		        });
+		    } else {
+		        $.notify("Debe elegir un permiso", "error");
+		    }
+		});
+
 
 	    function sleep(ms) {
 	      return new Promise(resolve => setTimeout(resolve, ms));
@@ -191,8 +211,8 @@
 	    $(".list_product").click(function(){
 	    	location.href = "{% url 'List_Employee' %}"
 	    })
-	  });
-	</script>
+	 });
+</script>
 
 
 {% endblock %}

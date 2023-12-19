@@ -5,6 +5,10 @@ class AuthenticationUser:
 		self.headers = {'Content-Type': 'application/json'}
 		self.request = request
 
+	def Create_Employee(self,data):
+		response = requests.request("POST", env.CREATE_EMPLOYEE, headers= self.headers, data=json.dumps(data))
+		return json.dumps(json.loads(response.text))
+
 	def Login(self):
 		values = None
 		try:
@@ -18,7 +22,7 @@ class AuthenticationUser:
 			self.request.session['logo'] = values['logo']
 			self.request.session['permission'] = values['permission']
 		except Exception as e:
-			print("Error")
+			print(e)
 		return json.dumps({'result': values['result'], 'message': values['message']})
 
 
@@ -35,6 +39,10 @@ class AuthenticationUser:
 		return json.loads(response.text)
 	def Update_User(self, data):
 		response = requests.request("PUT", env.UPDATE_USER, headers=self.headers, data=json.dumps(data))
+		return json.dumps(json.loads(response.text))
+
+	def Delelete_User(self,data):
+		response = requests.request("DELETE", env.DELETE_USER, headers = self.headers, data=json.dumps(data))
 		return json.dumps(json.loads(response.text))
 
 class Supplier:
@@ -81,6 +89,23 @@ class Inventory:
 		response = requests.request("GET", env.GET_LIST_PRODUCTS, headers= self.headers, data=json.dumps({'pk_employee':self.request.session['pk_employee']}))
 		return json.loads(response.text)
 
+	def Return_Products(self):
+		response = requests.request('POST',env.RETURN_PRODUCTS, headers= self.headers, data = json.dumps({'pk_user':self.request.session['pk_employee']}))
+
+	def Return_Product(self):
+		response = requests.request('PUT',env.RETURN_PRODUCT, headers= self.headers, data = json.dumps(self.request.GET))
+
+
+	def Product_Reserved(self):
+		data = self.request.GET
+		payload = json.dumps({
+		  "pk_user": self.request.session['pk_employee'],
+		  "pk_product": data['pk_product'],
+		  "quantity": data['quantity']
+		})
+		response = requests.request("POST", env.PRODUCT_RESERVED_USER, headers= self.headers, data=payload)
+		return json.dumps(json.loads(response.text))
+
 	def Create_Product(self, excel = 0):
 		data = self.request.GET.copy()
 		for i in data.keys():
@@ -118,7 +143,6 @@ class Inventory:
 		data['pk_employee'] = self.request.session['pk_employee']
 		payload = json.dumps(data)
 		response = requests.request("PUT", env.UPDATE_PRODUCT, headers= self.headers, data=payload)
-		print(response.text)
 		return json.dumps(json.loads(response.text))
 
 	def Get_List_Products_Supplier(self):
@@ -157,7 +181,6 @@ class Invoice:
 			'type_document': int(type_invoice)
 		})
 		response = requests.request("GET", env.GET_LIST_INVOICE, headers= self.headers, data=payload)
-		print(json.loads(response.text))
 		return json.loads(response.text)
 
 	def Annulled_Invoice(self):
@@ -171,6 +194,10 @@ class Invoice:
 		response = requests.request("GET", env.GET_INVOICE, headers= self.headers, data=json.dumps({'pk_invoice':pk}))
 		return json.loads(response.text)
 
+	def Create_Invoice(self, data):
+		response = requests.request("POST", env.CREATE_INVOICE, headers= self.headers, data=json.dumps(data))
+		return json.dumps(json.loads(response.text))
+
 class Setting:
 	def __init__(self,request):
 		self.headers = {'Content-Type': 'application/json'}
@@ -179,6 +206,10 @@ class Setting:
 	def Get_Data(self, url):
 		response = requests.request("GET", url, headers= self.headers, data={})
 		return json.loads(response.text)
+
+	def Get_Resolution(self,data):
+		response = requests.request("GET", env.GET_RESOLUTION, headers= self.headers, data=json.dumps(data))
+		return json.dumps(json.loads(response.text))
 
 class Customer:
 	def __init__(self,request):

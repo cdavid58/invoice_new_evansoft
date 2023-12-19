@@ -1,0 +1,172 @@
+<div class="bill">
+  <div class="brand">
+    {{company.name|title}}
+  </div>
+  <div class="address">
+    {{company.address}} <br> 
+    TLF No- {{company.phone}}
+  </div>
+  <div class="shop-details">
+    CLIENTE: {{client.name|title}}<br>
+    NIT CLIENTE: {{client.identification_number}}
+  </div>
+  <div>FACTURA POS {% if invoice.annulled %}- ANULADA{% endif %}</div>
+  <div class="bill-details" style="margin-bottom: 10px;">
+    <div class="">
+      <div>N° FACT: {{number}}</div>
+    </div>
+     <div class="">
+      <div>FECHA: {{invoice.date}}</div>
+      <div>HORA: 14:10</div>
+    </div>
+  </div>
+  <table class="table" style="font-size: 20px;">
+    <tr class="header">
+    <th style="text-align: center;">
+      Prod.
+    </th> 
+    <th style="text-align: center;">
+      Base
+    </th> 
+    <th style="text-align: center;">
+      Cant
+    </th>
+    <th style="margin-left: 5px; text-align: center;">
+      SubTotal
+    </th>
+    </tr>
+    {% for i in details %}
+      <tr class="items">
+        <td style="padding: 3px; text-align: left;">{{i.name}}</td>
+        <td style="padding: 3px; text-align: center;">{{i.price|floatformat:0}}</td>
+        <td style="padding: 3px; text-align: center;">{{i.quantity}}</td>
+        <td style="padding: 3px; text-align: center;">{{i.subtotals|floatformat:0}}</td>
+      </tr>
+    {% endfor %}
+
+    <tr class="total">
+      <td></td>
+      <td>SUBTOTAL</td>
+      <td></td>
+      <td>{{totals.subtotals}}</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>IVA</td>
+      <td></td>
+      <td>{{totals.tax}}</td>
+    </tr>
+    <tr>
+      <td></td>
+      <td>ICO</td>
+      <td></td>
+      <td>{{totals.ipo}}</td>
+    </tr>
+    <tr class="net-amount">
+      <td></td>
+      <td>TOTAL</td>
+      <td></td>
+      <td>{{totals.totals}}</td>
+    </tr>
+  </table>
+  <div>
+    <span>
+      Observaciones: {{invoice.note}}
+    </span>
+  </div>
+  <br>
+  Metodo de Pago: {{invoice.metod}}<br>
+  Resolucion: {{invoice.resolution.resolution}}<br>
+  Factura creada por Evansoft <br>
+  Gracias por su compra, vuelva pronto!
+</div>
+
+
+<style>
+  @import url('http://fonts.cdnfonts.com/css/vcr-osd-mono');
+  body {
+    font-family: 'VCR OSD Mono';
+    color: #000;
+    text-align:center;
+    justify-content: center;
+    font-size: 18px;
+    margin: 0;
+    padding: 0;
+  }
+  .bill{
+    width: 80mm;
+    padding: 10px 10px;
+  }
+  .flex {
+    display: flex;
+  }
+  .justify-between {
+    justify-content: space-between;
+  }
+  .table{
+    border-collapse: collapse;
+    width: 100%;
+  }
+  .table th, .items td {
+    border: 1px solid #000;
+  }
+
+  .table .header{
+    border-top: 2px dashed #000;
+    border-bottom: 2px dashed #000;
+  }
+  .table {
+    text-align: left;
+  }
+  .table .total td:first-of-type {
+    border-top: none;
+    border-bottom: none;
+  }
+  .table .total td {
+    border-top: 2px dashed #000;
+    border-bottom: 2px dashed #000;
+  }
+  .table .net-amount td:first-of-type {
+    border-top: none;
+  }
+  .table .net-amount td {
+    border-top: 2px dashed #000;
+  }
+  .table .net-amount{
+    border-bottom: 2px dashed #000;
+  }
+  @media print {
+      .hidden-print,
+      .hidden-print * {
+          display: none !important;
+      }
+  }
+</style>
+
+
+
+<script>
+	print()
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

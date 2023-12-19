@@ -101,14 +101,15 @@
         $(this).closest('tr').remove();
         id = this.id
         $.ajax({
-          data:{'pk_user':id},
+          url:"{% url 'Delete_Employee' %}",
+          data:{'pk_employee':id},
           success: function(e){
-            data = JSON.parse(e)
-            if(data.result){
+            _e = JSON.parse(e)
+            if(_e.result){
               $.notify("Usuario eliminado con éxito",'success')
             }
             else{
-             $.notify(data.message,'error') 
+             $.notify(_e.message,'error') 
             }
           }
         })

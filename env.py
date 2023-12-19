@@ -8,11 +8,7 @@ URL_IN_USE = URL_LOCAL
 #AUTHENTICATION 
 
 LOGIN = f"{URL_IN_USE}/user/Login/"
-GET_LIST_EMPLOYEE = f"{URL_IN_USE}/user/Get_List_Employee/"
 LOGOUT = f"{URL_IN_USE}/user/LogOut/"
-UPDATE_USER = f"{URL_IN_USE}/user/Update_User/"
-
-
 
 #SUPPLIER
 
@@ -24,7 +20,11 @@ UPDATE_SUPPLIER = f"{URL_IN_USE}/inventory/Update_Supplier/"
 
 #EMPLOYEE
 
+CREATE_EMPLOYEE = f"{URL_IN_USE}/user/Create_Employee/"
 GET_EMPLOYEE = f"{URL_IN_USE}/user/Get_Employee/"
+DELETE_USER = f"{URL_IN_USE}/user/Delete_User/"
+UPDATE_USER = f"{URL_IN_USE}/user/Update_User/"
+GET_LIST_EMPLOYEE = f"{URL_IN_USE}/user/Get_List_Employee/"
 
 #INVENTORY
 
@@ -34,6 +34,9 @@ DELETE_PRODUCT = f"{URL_IN_USE}/inventory/Delete_Product/"
 GET_PRODUCT = f"{URL_IN_USE}/inventory/Get_Product/"
 UPDATE_PRODUCT = f"{URL_IN_USE}/inventory/Update_Product/"
 GET_LIST_PRODUCTS_SUPPLIER = f"{URL_IN_USE}/inventory/Get_List_Products_Supplier/"
+PRODUCT_RESERVED_USER = f"{URL_IN_USE}/inventory/Product_Reserved_User/"
+RETURN_PRODUCTS = f"{URL_IN_USE}/inventory/Return_Products/"
+RETURN_PRODUCT = f"{URL_IN_USE}/inventory/Return_Product/"
 
 GET_CATEGORY = f"{URL_IN_USE}/inventory/Get_Category/"
 GET_SUBCATEGORY = f"{URL_IN_USE}/inventory/Get_SubCategory/"
@@ -58,6 +61,7 @@ DELETE_CLIENT = f"{URL_IN_USE}/customer/Delete_Client/"
 GET_LIST_INVOICE = f"{URL_IN_USE}/invoice/Get_List_Invoice/"
 ANNULLED_INVOICE = f"{URL_IN_USE}/invoice/Annulled_Invoice/"
 GET_INVOICE = f"{URL_IN_USE}/invoice/Get_Invoice/"
+CREATE_INVOICE = f"{URL_IN_USE}/invoice/Create_Invoice/"
 
 
 
@@ -71,5 +75,6 @@ GET_PERMISSION = f"{URL_IN_USE}/setting/Get_Permission/"
 GET_TYPE_DOCUMENT_I = f"{URL_IN_USE}/setting/Get_Type_Document_I/"
 GET_TYPE_REGIMEN = f"{URL_IN_USE}/setting/Get_Type_Regimen/"
 GET_TYPE_ORGANIZATION = f"{URL_IN_USE}/setting/Get_Type_Organization/"
+GET_RESOLUTION = f"{URL_IN_USE}/company/Get_Resolution/"
 
 
