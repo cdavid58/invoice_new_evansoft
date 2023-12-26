@@ -8,4 +8,6 @@ urlpatterns=[
 	url(r'^Load_Inventory_Excel/$',Load_Inventory_Excel,name="Load_Inventory_Excel"),
 	url(r'^Delete_Product/$',Delete_Product,name="Delete_Product"),
 	url(r'^Edit_Product/(\w+)/$',Edit_Product,name="Edit_Product"),
+	url(r'^Transfer/$',Transfer,name="Transfer"),
+	url(r'^Save_Transfer/$',Save_Transfer,name="Save_Transfer"),
 ]

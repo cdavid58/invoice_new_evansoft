@@ -86,11 +86,17 @@ class Inventory:
 		self.headers = {'Content-Type': 'application/json'}
 		self.request = request
 
+	def Save_Transfer(self,data):
+		response = requests.request("POST", env.SAVE_TRANSFER, headers= self.headers, data= json.dumps(data))
+		return json.dumps(json.loads(response.text))
+
 	def Get_List_Products(self):
 		response = requests.request("GET", env.GET_LIST_PRODUCTS, headers= self.headers, data=json.dumps({'pk_employee':self.request.session['pk_employee']}))
 		return json.loads(response.text)
 
-	
+	def List_Branch(self):
+		response = requests.request("GET", env.LIST_BRANCH, headers= self.headers, data=json.dumps({'pk_branch':self.request.session['pk_branch']}))
+		return json.loads(response.text)
 
 	def Return_Products(self):
 		response = requests.request('POST',env.RETURN_PRODUCTS, headers= self.headers, data = json.dumps({'pk_user':self.request.session['pk_employee']}))

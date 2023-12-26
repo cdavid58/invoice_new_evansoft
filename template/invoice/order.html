@@ -21,9 +21,8 @@
 				<div class="mb-3 col-md-3  col-12">
 					<label for="organizerMultiple">Cliente</label>
 					<select class="form-select js-choice client text-dark" id="client" size="1">
-						<option value="0">Consumidor Final</option>
 					  {% for i in client %}
-					  	<option value="{{i.pk_client}}">{{i.name}}</option>
+					  	<option value="{{i.pk_customer}}">{{i.name}}</option>
 					  {% endfor %}
 					</select>
 				</div>
@@ -278,17 +277,8 @@
 
 			$(".product").click()
 
-			const selectElement = document.getElementById('organizerSingle');
-			if (selectElement) {
-			  selectElement.addEventListener('click', (event) => {
-			    // Aquí puedes realizar acciones cuando se haga clic en el elemento select
-			    console.log('Se hizo clic en el elemento select');
-			    
-			    // Puedes acceder al valor seleccionado usando event.target.value
-			    console.log('Valor seleccionado:', event.target.value);
-			  });
-			}
 
+			
 			function Get_Number(totals){
 				if(totals > 212060 && !t_d && !omitir){
 					res_type_document = 2
@@ -489,10 +479,6 @@
 
 
 		function Data_Header(){
-			type_document = 1
-			if(parseFloat($(".subtotal").text()) > parseFloat(212060)){
-				type_document = 2
-			}
 			return JSON.stringify({
 				"pk_employee":"{{request.session.pk_employee}}",
 				"prefix": prefix,
@@ -500,12 +486,12 @@
 				"date":$(".date_invoice").val(),
 				"date_invoice_due":($(".date_invoice_due").val() !== "") ? $(".date_invoice_due").val() : $(".date_invoice").val(),
 				"paymentform": isNaN(parseInt($(".paymentform").val())) ? 1 : parseInt($(".paymentform").val()),
-				'type_document': type_document,
+				'type_document': res_type_document,
 				"total_invoice": $(".total_invoice").text(),
 				'referens': $(".referens").val(),
 				'number': $(".number_invoice").text(),
 				'note': ($(".notes").val() === "") ? "No hay" : $(".notes").val(),
-				"state": (type_document === 1) ? "Factura POS generada con exito" : "Sin enviar a la DIAN"
+				"state": (res_type_document === 1) ? "Factura POS generada con exito" : "Sin enviar a la DIAN"
 			}, null, 2)
 		}
 

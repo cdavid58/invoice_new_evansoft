@@ -2,6 +2,7 @@ from django.core.paginator import Paginator
 from django.http import HttpResponse
 from django.shortcuts import render
 from operations import Inventory, Supplier
+import json
 
 def Get_List_Products(request):
 	data = Inventory(request).Get_List_Products()
@@ -33,7 +34,6 @@ def Load_Inventory_Excel(request):
 				_data['pk_supplier'] = 6
 				request.GET = j
 				result = Inventory(request).Create_Product(excel = excel)
-				print(result)
 				excel = 0
 		return HttpResponse(result)
 
@@ -49,3 +49,19 @@ def Edit_Product(request, code):
 					'cat': Inventory(request).Get_Category(),
 					'supplier':Supplier(request).List_Supplier()
 				})
+
+def Transfer(request):
+	Inventory(request).Return_Products()
+	return render(request,'inventory/transfer.html',{
+		'list_branch': Inventory(request).List_Branch(),
+		'product':Inventory(request).Get_List_Products()
+		})
+
+
+def Save_Transfer(request):
+	if request.is_ajax():
+		_data = request.POST
+		data = json.loads(_data['headers'])
+		data['branch_sends'] = request.session['pk_branch']
+		data['details'] = json.loads(_data['items'])
+		return HttpResponse(Inventory(request).Save_Transfer(data))

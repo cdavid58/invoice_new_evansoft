@@ -2,6 +2,7 @@ URL_LOCAL = "http://127.0.0.1:9090"
 #URL_SERVER = "https://apievansoft.pythonanywhere.com"
 
 URL_APPLICATION = "http://localhost:8000"
+URL_APPLICATION = "http://http://26.246.95.16"
 #URL_APPLICATION = "https://facturaevansoft.pythonanywhere.com"
 
 URL_IN_USE = URL_LOCAL
@@ -38,6 +39,9 @@ GET_LIST_PRODUCTS_SUPPLIER = f"{URL_IN_USE}/inventory/Get_List_Products_Supplier
 PRODUCT_RESERVED_USER = f"{URL_IN_USE}/inventory/Product_Reserved_User/"
 RETURN_PRODUCTS = f"{URL_IN_USE}/inventory/Return_Products/"
 RETURN_PRODUCT_UNIQUE = f"{URL_IN_USE}/inventory/return_product_UNIQUE/"
+LIST_BRANCH = f"{URL_IN_USE}/company/List_Branch/"
+SAVE_TRANSFER = f"{URL_IN_USE}/transfers/Save_Transfer/"
+
 
 GET_CATEGORY = f"{URL_IN_USE}/inventory/Get_Category/"
 GET_SUBCATEGORY = f"{URL_IN_USE}/inventory/Get_SubCategory/"
