@@ -1,3 +1,4 @@
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import env, json, requests
 
 class AuthenticationUser:
@@ -89,11 +90,13 @@ class Inventory:
 		response = requests.request("GET", env.GET_LIST_PRODUCTS, headers= self.headers, data=json.dumps({'pk_employee':self.request.session['pk_employee']}))
 		return json.loads(response.text)
 
+	
+
 	def Return_Products(self):
 		response = requests.request('POST',env.RETURN_PRODUCTS, headers= self.headers, data = json.dumps({'pk_user':self.request.session['pk_employee']}))
 
-	def Return_Product(self):
-		response = requests.request('PUT',env.RETURN_PRODUCT, headers= self.headers, data = json.dumps(self.request.GET))
+	def Return_Product_UNIQUE(self):
+		response = requests.request('PUT',env.RETURN_PRODUCT_UNIQUE, headers= self.headers, data = json.dumps(self.request.GET))
 
 
 	def Product_Reserved(self):

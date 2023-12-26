@@ -42,13 +42,10 @@ def Return_Products(request):
 		Inventory(request).Return_Products()
 		return HttpResponse(True)
 
-def Return_Product(request):
+def Return_Product_UNIQUE(request):
 	if request.is_ajax():
-		print(request.GET)
-		Inventory(request).Return_Product()
-
+		Inventory(request).Return_Product_UNIQUE()
 		return HttpResponse(True)
-
 
 def Create_Invoice(request):
 	if request.is_ajax():
@@ -112,12 +109,13 @@ def Print_Invoice(request,pk):
 	page_invoice = 'pos'
 	if int(data['type_document']) == 2:
 		page_invoice = 'elect'
-	return render(request,f'invoice/{page_invoice}.html',{
+	return render(request,f'invoice/pos.html',{
 		'invoice':data,
 		'details':data['details'],
 		'paymentmethodinvoice':data['payment_form'],
 		'totals':totals,
 		'client':data['customer'],
 		'company':data['branch'],
-		'number':data['resolution']['_from']
+		'number':data['resolution']['_from'],
+		'type_document':page_invoice,
 	})

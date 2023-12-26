@@ -70,7 +70,7 @@
 				<div class="mb-3 col-md-4">
 					<label for="organizerMultiple" class="text-dark">Producto</label>
 					<select class="form-select js-choice product text-dark" id="organizerSingle" size="1">
-						<option>SELECCIONE UN PRODUCTO</option>
+						<option value="0">SELECCIONE UN PRODUCTO</option>
 					  {% for i in product %}
 					  	<option value="{{i.code}}">{{i.name}}</option>
 					  {% endfor %}
@@ -247,6 +247,7 @@
 		let prefix = null
 		let res_type_document = 1
 		let t_d = false
+		let omitir = false
 
 		function recovery_invoice_saved(){
 			var totalItems = localStorage.length;
@@ -274,9 +275,22 @@
 		recovery_invoice_saved()		
 
 		$(document).ready(function () {
+
+			$(".product").click()
+
+			const selectElement = document.getElementById('organizerSingle');
+			if (selectElement) {
+			  selectElement.addEventListener('click', (event) => {
+			    // Aquí puedes realizar acciones cuando se haga clic en el elemento select
+			    console.log('Se hizo clic en el elemento select');
+			    
+			    // Puedes acceder al valor seleccionado usando event.target.value
+			    console.log('Valor seleccionado:', event.target.value);
+			  });
+			}
+
 			function Get_Number(totals){
-				console.log(res_type_document)
-				if(totals > 212060 && !t_d){
+				if(totals > 212060 && !t_d && !omitir){
 					res_type_document = 2
 					var notification = new Notification("INFORMACIÓN", {
 					  body: "Se ha cambiado a facturación electrónica"
@@ -294,14 +308,24 @@
 					$.notify("Se ha cambiado a facturación POS", "info");
 					t_d = false
 				}
-
 				$.ajax({
 					url: "{% url 'Get_Number' %}",
 					data:{'type_document':res_type_document},
 					success:function(e){
 						_e = JSON.parse(e)
-						$(".number_invoice").text(_e.number)
-						prefix = _e.prefix
+						if(Object.keys(_e).length > 0){
+							$(".number_invoice").text(_e._from)
+							prefix = _e.prefix
+						}
+						if(res_type_document == 2 && Object.keys(_e).length == 0){
+							res_type_document = 1
+							t_d = false
+							omitir = true
+							$.notify("Nos mantenemos en facturación POS, por falta de resolucion en factura electrónica", "info");
+						}
+						else if(res_type_document == 2 && Object.keys(_e).length > 0){
+							omitir = false
+						}
 					}
 				})
 			}
@@ -347,9 +371,12 @@
 	        $(".quantity").focus();
 		    }
 			});
-	    
-	    $(".date_invoice").val(new Date().toISOString().split('T')[0]);
-	    $(".due_date").val(new Date().toISOString().split('T')[0]);
+	    var fechaActual = new Date();
+			var fechaActualUTC = new Date();
+			var offset = -5 * 60;
+			var fechaBogota = new Date(fechaActualUTC.getTime() + offset * 60000);
+			$(".date_invoice").val(fechaBogota.toISOString().split('T')[0]);
+	    $(".due_date").val(fechaBogota.toISOString().split('T')[0]);
 	    header.date_invoice = $(".date_invoice").val();
 	    header.due_date = $(".due_date").val();
 
@@ -364,24 +391,29 @@
 
 	    $(".product").change(function () {
 	        id = $(this).val();
-	        $.ajax({
-	            url: "{% url 'Loading_Product' %}",
-	            data: {'code': id},
-	            success: function (e) {
-	                _e = JSON.parse(e);
-	                console.log(_e);
-	                products.push(_e)
-	                $(".quantity").focus()
-	                $('#price').append(`
-	                	<option value="1">${_e['price_1']}</option>
-	                	<option value="2">${_e['price_2']}</option>
-	                	<option value="3">${_e['price_3']}</option>
-	                `)
-	                $(".stock").val(_e['quantity'])
-	                id_product = _e['code']
-	                $(".quantity").val('')
-	            }
-	        });
+	        if(id !== '0'){
+		        $.ajax({
+		            url: "{% url 'Loading_Product' %}",
+		            data: {'code': id},
+		            success: function (e) {
+		                _e = JSON.parse(e);
+		                products.push(_e)
+		                $(".quantity").focus()
+		                $('#price').append(`
+		                	<option value="1">${_e['price_1']}</option>
+		                	<option value="2">${_e['price_2']}</option>
+		                	<option value="3">${_e['price_3']}</option>
+		                `)
+		                $(".stock").val(_e['quantity'])
+		                id_product = _e['code']
+		                $(".quantity").val('')
+		            }
+		        });
+		      }
+		      else{
+						$('#price').empty()
+						$(".stock").val(0)
+		      }
 	    });
 
 	   	$(".quantity").keypress(function(e){
@@ -409,7 +441,6 @@
                 $.ajax({
                   data: { 'pk_product': id_product, 'quantity': value },
                   success: function (e) {
-                  	console.log(e)
                     if (e) {
                       UpdateExistingProduct(id_product, value);
                       $('.stock').val(stockValue - value);
@@ -425,7 +456,7 @@
                   }
                 });
               } else if (value < 0) {
-                  UpdateExistingProduct(id_product, value);
+                UpdateExistingProduct(id_product, value);
               }
             }
 	      }
@@ -473,7 +504,7 @@
 				"total_invoice": $(".total_invoice").text(),
 				'referens': $(".referens").val(),
 				'number': $(".number_invoice").text(),
-				'note': $(".notes").val(),
+				'note': ($(".notes").val() === "") ? "No hay" : $(".notes").val(),
 				"state": (type_document === 1) ? "Factura POS generada con exito" : "Sin enviar a la DIAN"
 			}, null, 2)
 		}
@@ -508,9 +539,10 @@
 				let tax_row_table_invoice = 0
         for(i=0; i<filas.length; i++){
             var celdas = $(filas[i]).find("td")
-          	subtotal_row_table_invoice += parseFloat($(celdas[8]).text())
-          	impoconsumo += parseFloat($(celdas[7]).text()) * parseFloat($(celdas[3]).text())
-          	impuestos += parseFloat($(celdas[5]).text()) * parseFloat($(celdas[3]).text())
+            _quantity = parseFloat($(celdas[3]).text())
+          	subtotal_row_table_invoice += parseFloat($(celdas[4]).text()) * _quantity
+          	impoconsumo += parseFloat($(celdas[7]).text()) * _quantity
+          	impuestos += parseFloat($(celdas[5]).text()) * _quantity
         }
         $(".subtotal").text(Math.round(subtotal_row_table_invoice))
         $(".ico").text(Math.round(impoconsumo))
@@ -529,23 +561,23 @@
 
 		function CalculateTaxValue(product){
 			type_price = parseInt($(".price").val()) - 1 
-			price = (type_price == 1) ? SelectPrice(type_price) - product['ipo'] :  SelectPrice(type_price)
-			_price = product[price]
+			price = (type_price == 0) ? SelectPrice(type_price)  :  SelectPrice(type_price)
+			_price = (price === 'price_1') ? product[price] - product['ipo'] : product[price]
 			return _price - (_price / (1 + ( parseInt(product['tax']) / 100 )))
 		}
 
 		function CalculateBaseWithDiscount(product){
 			type_price = parseInt($(".price").val()) - 1 
-			price = (type_price == 1) ? SelectPrice(type_price) - product['ipo'] :  SelectPrice(type_price)
-			_price = product[price]
+			price = (type_price == 0) ? SelectPrice(type_price)  :  SelectPrice(type_price)
+			_price =(price === 'price_1') ? product[price] - product['ipo'] : product[price]
 			tax = CalculateTaxValue(product)
 			base = _price - tax
 			discount = base * (product['discount'] / 100)
 			return base - discount
 		}
 
-		function TotalValue(tax, base_g, ipo){
-			return parseInt($(".quantity").val()) * (tax + base_g + ipo)
+		function TotalValue(quantity, tax, base_g, ipo){
+			return quantity * (tax + base_g + ipo)
 		}
 
 		function Add_Product(product, quantity) {
@@ -553,8 +585,7 @@
 		    const ipo = product['ipo']
 		    const base_g = CalculateBaseWithDiscount(product)
 		    const tax = CalculateTaxValue(product)
-		    const totalValue = TotalValue(tax,base_g, ipo)
-		    
+		    const totalValue = TotalValue(quantity,tax,base_g, ipo)
 		    $(".row_product").append(`
 		        <tr>
 		            <td hidden class="${product.code}">${product.code}</td>
@@ -562,10 +593,10 @@
 		            <td>${product.name}</td>
 		            <td class="text-center">${quantity}</td>
 		            <td>${base_g.toFixed(2)}</td>
-		            <td>${product.tax}</td>
+		            <td>${tax.toFixed(2)}</td>
 		            <td>${$('.discount').val()}</td>
 		            <td>${product['ipo']}</td>
-		            <td>${totalValue}</td>
+		            <td>${totalValue.toFixed(2)}</td>
 		        </tr>
 		    `);
 		  }
@@ -573,7 +604,6 @@
 		    const baseWithDiscount =  product.price
 		    const taxValue = product.tax
 		    const totalValue = product.totalValue
-		    
 		    $(".row_product").append(`
 		        <tr>
 		            <td hidden class="${product.pk_product}">${product.pk_product}</td>
@@ -587,52 +617,44 @@
 		            <td>${totalValue}</td>
 		        </tr>
 		    `);
-
 		  }
 		  CalculateTotalsInvoice();
 		}
 
 		function UpdateExistingProduct(pk_product, quantity) {
 		    const existingRow = $(`.row_product td.${pk_product}`).closest("tr");
-
 		    if (existingRow.length > 0) {
-		        const existingQuantity = parseInt(existingRow.find(".text-center").text());
-		        const newQuantity = existingQuantity + quantity;
-
-		        if (newQuantity > 0) {
-		            existingRow.find(".text-center").text(newQuantity);
-		            const productIndex = products.findIndex(product => parseInt(product.code) === parseInt(pk_product));
-		            if (productIndex !== -1) {
-		                const product = products[productIndex];
-		                _quantity = parseInt(existingRow.find("td:eq(3)").text());
-		                _base_g = parseInt(existingRow.find("td:eq(4)").text());
-		                _subtotal = _quantity * _base_g;
-		                existingRow.find("td:eq(8)").text(_subtotal);
-		                CalculateTotalsInvoice();
-		                $.ajax({
-		                	url: "{% url 'Return_Product' %}",
-		                	data:{'pk_product':product['code'], 'quantity':quantity, 'pk_employee':"{{request.session.pk_employee}}"}
-		                })
-		            }
-		        } else {
-		            existingRow.remove();
-		            const productIndex = products.findIndex(product => parseInt(product.code) === parseInt(pk_product));
-		            products.splice(productIndex, 1);
-		            CalculateTotalsInvoice();
-		            $.ajax({
-		            	url:"{% url 'Return_Products' %}",
-		            	success: function(e){
-
-		            	}
-		            })
-		        }
+	        const existingQuantity = parseInt(existingRow.find(".text-center").text());
+	        const newQuantity = existingQuantity + quantity;
+	        if (newQuantity > 0) {
+            existingRow.find(".text-center").text(newQuantity);
+            const productIndex = products.findIndex(product =>product.code === pk_product);
+            if (productIndex !== -1) {
+              const product = products[productIndex];
+              _quantity = parseInt(existingRow.find("td:eq(3)").text());
+              _base_g = parseInt(existingRow.find("td:eq(4)").text());
+              _subtotal = _quantity * _base_g;
+              existingRow.find("td:eq(8)").text(_subtotal);
+              $(".stock").val(parseInt($(".stock").val()) + (quantity < 0) ?  Math.abs(quantity) : 0 )
+              CalculateTotalsInvoice();
+            }
+	        } else {
+            existingRow.remove();
+            const productIndex = products.findIndex(product => product.code === pk_product);
+            products.splice(productIndex, 1);
+            CalculateTotalsInvoice();
+            $.ajax({
+            	url:"{% url 'Return_Products' %}"
+            })
+            $(".product").click()
+            $(".stock").val(0)
+	        }
 		    } else {
-		        Add_Product(products.find(product => parseInt(product.code) === parseInt(pk_product)), quantity);
+		        Add_Product(products.find(product => product.code === pk_product), quantity);
 		    }
 		}
 
 		function Save_Invoice(){
-			
 			$.ajax({
 				url: "{% url 'Save_Invoice' %}",
 				method: "POST",

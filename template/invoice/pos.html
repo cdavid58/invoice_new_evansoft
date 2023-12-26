@@ -10,7 +10,7 @@
     CLIENTE: {{client.name|title}}<br>
     NIT CLIENTE: {{client.identification_number}}
   </div>
-  <div>FACTURA POS {% if invoice.annulled %}- ANULADA{% endif %}</div>
+  <div>{% if type_document == 1 %}FACTURA POS {% else %}Documento de soporte electrónico temporal{% endif %} {% if invoice.annulled %}- ANULADA{% endif %}</div>
   <div class="bill-details" style="margin-bottom: 10px;">
     <div class="">
       <div>N° FACT: {{number}}</div>
@@ -91,10 +91,10 @@
     justify-content: center;
     font-size: 18px;
     margin: 0;
-    padding: 0;
+    padding: 5;
   }
   .bill{
-    width: 80mm;
+    width: 90mm;
     padding: 10px 10px;
   }
   .flex {

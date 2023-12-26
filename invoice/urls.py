@@ -11,5 +11,5 @@ urlpatterns=[
 	url(r'^Save_Invoice/$',Save_Invoice,name="Save_Invoice"),
 	url(r'^Get_Number/$',Get_Number,name="Get_Number"),
 	url(r'^Return_Products/$',Return_Products,name="Return_Products"),
-	url(r'^Return_Product/$',Return_Product,name="Return_Product"),
+	url(r'^Return_Product_UNIQUE/$',Return_Product_UNIQUE,name="Return_Product_UNIQUE"),
 ]
