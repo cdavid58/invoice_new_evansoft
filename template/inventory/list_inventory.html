@@ -15,7 +15,7 @@
       </div>
       <div class="col-md-7 col-12 ml-auto">
         {% for i in request.session.permission %}
-          {% if i == "Todos" %}
+          {% if i == "Todos" or i == "Creador" %}
             <button class="btn btn-success col-md-3 col-sm-4 col-12 mb-3 upload_excel_inventory">Cargar Excel</button>
           {% endif %}
           {% if i == "Creador" or i == "Todos" %}
@@ -27,32 +27,35 @@
     </div>
   </div>
 </div>
-<input type="text" id="searchInput" placeholder="Buscar producto..."  autofocus class="form-control form-control-sm mb-2 searchInput">
 
 <div class="card" data-date="{{ i.registration_date }}">
   <div class="card-body p-2 overflow-hidden">
     <div class="table-responsive">
-      <table class="table">
+      <table class="table" id="example" style="width:100%">
         <thead>
           <tr>
+            <th class="text-dark w-100 text-center fs-0">Información</th>
             <th class="text-dark fs-0">Código</th>
             <th class="text-dark">Articulo</th>
             <th class="text-dark">Cantidad</th>
             <th class="text-dark">Precio</th>
             <th class="text-dark">IVA</th>
             <th class="text-dark">IPO</th>
-            {% if request.session.permission %}
-              {% for j in request.session.permission %}
-                {% if j == "Editor" or j == "Todos" or j == "Eliminador"%}
-                  <th class="text-dark">Acciones</th>
-                {% endif %}
-              {% endfor %}
-            {% endif %}
+            <th class="text-dark">
+              {% if request.session.permission %}
+                {% for j in request.session.permission %}
+                  {% if j == "Editor" or j == "Todos" or j == "Eliminador"%}
+                    Acciones
+                  {% endif %}
+                {% endfor %}
+              {% endif %}
+            </th>
           </tr>
         </thead>
         <tbody>
           {% for i in page_obj %}
             <tr>
+              <td class="details text-center">Ver más de {{i.name}}</td>
               <td class="name{{i.pk_user}} code">{{i.code}}</td>
               <td class="product">{{i.name}}</td>
               <td>{{i.quantity}}</td>
@@ -76,36 +79,6 @@
     </div>
   </div>
 </div>
-
-{% if page_obj.has_other_pages %}
-  <div class="card-footer border-top d-flex justify-content-center">
-    {% if page_obj.has_previous %}
-      <a class="btn btn-falcon-default btn-sm me-2" href="?page=1" data-bs-toggle="tooltip" data-bs-placement="top" title="First">
-        <span class="fas fa-chevron-left"></span>
-      </a>
-    {% endif %}
-    
-    {% if page_obj.paginator.num_pages <= 3 %}
-      {% for num in page_obj.paginator.page_range %}
-        <a class="btn btn-sm btn-falcon-default me-2 {% if num == page_obj.number %}active{% endif %}" href="?page={{ num }}">{{ num }}</a>
-      {% endfor %}
-    {% else %}
-      {% if page_obj.number > 1 %}
-        <a class="btn btn-sm btn-falcon-default me-2" href="?page={{ page_obj.number|add:'-1' }}">{{ page_obj.number|add:"-1" }}</a>
-      {% endif %}
-      <a class="btn btn-sm btn-falcon-default me-2 active" href="?page={{ page_obj.number }}">{{ page_obj.number }}</a>
-      {% if page_obj.number < page_obj.paginator.num_pages %}
-        <a class="btn btn-sm btn-falcon-default me-2" href="?page={{ page_obj.number|add:'1' }}">{{ page_obj.number|add:"1" }}</a>
-      {% endif %}
-    {% endif %}
-
-    {% if page_obj.has_next %}
-      <a class="btn btn-falcon-default btn-sm" href="?page={{ page_obj.paginator.num_pages }}" data-bs-toggle="tooltip" data-bs-placement="top" title="Last">
-        <span class="fas fa-chevron-right"></span>
-      </a>
-    {% endif %}
-  </div>
-{% endif %}
 
 
 
@@ -134,21 +107,27 @@
 
 {% endblock %}
 {% block script %}
+
   <script>
+
+    function format(data) {
+      return `
+        <div>Código: ${data[1]}</div>
+        <div>Articulo: ${data[2]}</div>
+        <div>Cantidad: ${data[3]}</div>
+        <div>Precio: ${data[4]}</div>
+        <div>IVA: ${data[5]}</div>
+        <div>IPO: ${data[6]}</div>
+        <div>${data[7]}</div>
+      `
+    }
+
+    preferens_columm = 6;
+
+
     $(document).ready(function(){
+
       console.clear()
-      $(".searchInput").on("input", function() {
-        var searchText = $(this).val().toLowerCase();
-        $("table tbody tr").each(function() {
-          var ccNitText = $(this).find(".code").text().toLowerCase();
-          var razonSocialText = $(this).find(".product").text().toLowerCase();
-          if (ccNitText.includes(searchText) || razonSocialText.includes(searchText) ) {
-            $(this).show();
-          } else {
-            $(this).hide();
-          }
-        });
-      });
       $('.add_product').click(function(){
         location.href = "{% url 'Create_Product' %}"
       })

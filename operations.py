@@ -1,4 +1,5 @@
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.utils.safestring import mark_safe
 import env, json, requests
 
 class AuthenticationUser:
@@ -9,6 +10,17 @@ class AuthenticationUser:
 	def Create_Employee(self,data):
 		response = requests.request("POST", env.CREATE_EMPLOYEE, headers= self.headers, data=json.dumps(data))
 		return json.dumps(json.loads(response.text))
+
+	def Query_Permissions(self):
+		change = True
+		response = requests.request("GET", env.QUERY_PERMISSIONS, headers= self.headers, data=json.dumps({"pk_employee":self.request.session['pk_employee']}))
+		values = json.loads(response.text)
+		if values != self.request.session['permission']:
+			change = False
+		self.request.session['permission'] = values
+		menu = mark_safe(env.HTML_MENU.replace('    ', '').replace('\t', ''))
+		self.request.session['html'] = menu
+		return json.dumps({'change':change,'html':menu})
 
 	def Login(self):
 		values = None
@@ -22,6 +34,8 @@ class AuthenticationUser:
 			self.request.session['name_branch'] = values['name_branch']
 			self.request.session['logo'] = values['logo']
 			self.request.session['permission'] = values['permission']
+			self.request.session['size_permission'] = len(values['permission'])
+			self.request.session['html'] = ""
 		except Exception as e:
 			print(e)
 		return json.dumps({'result': values['result'], 'message': values['message']})
@@ -33,6 +47,7 @@ class AuthenticationUser:
 
 	def LogOut(self):
 		response = requests.request("PUT", env.LOGOUT, headers= self.headers, data=json.dumps({'pk_employee': self.request.session['pk_employee']}))
+		print(json.loads(response.text))
 		return json.loads(response.text)
 
 	def Get_Employee(self,pk):
@@ -219,6 +234,14 @@ class Setting:
 	def Get_Resolution(self,data):
 		response = requests.request("GET", env.GET_RESOLUTION, headers= self.headers, data=json.dumps(data))
 		return json.dumps(json.loads(response.text))
+
+	def Get_Resolution_List(self):
+		response = requests.request("GET", env.GET_RESOLUTION_LIST, headers= self.headers, data=json.dumps({'pk_branch':self.request.session['pk_branch']}))
+		return json.loads(response.text)
+
+	def Get_Branch(self):
+		response = requests.request("GET", env.GET_BRANCH, headers= self.headers, data=json.dumps({'pk_branch':self.request.session['pk_branch']}))
+		return json.loads(response.text)
 
 class Customer:
 	def __init__(self,request):

@@ -18,7 +18,7 @@
       </div>
     </a>
   </div>
-  <div class="collapse navbar-collapse" id="navbarVerticalCollapse">
+  <div class="collapse navbar-collapse menu_mio" id="navbarVerticalCollapse">
     <div class="navbar-vertical-content scrollbar">
       <ul class="navbar-nav flex-column mb-3" id="navbarVerticalNav">
         <li class="nav-item">
@@ -94,17 +94,23 @@
                   <hr class="mb-0 navbar-vertical-divider" />
                 </div>
             </div>
-            <a class="nav-link" href="{% url 'Get_List_Customer' %}" >
-                <div class="d-flex align-items-center">
-                    <span class="nav-link-icon">
-                        <span class="fas fa-users"></span>
-                    </span>
-                    <span class="nav-link-text ps-1">Clientes</span>
-                </div>
-            </a>
             {% if request.session.permission %}
                 {% for i in request.session.permission %}
-                    {% if i == "Administrativo" or i == "Todos" %}
+                    {% if i != "Contador" %}
+                        <a class="nav-link" href="{% url 'Get_List_Customer' %}" >
+                            <div class="d-flex align-items-center">
+                                <span class="nav-link-icon">
+                                    <span class="fas fa-users"></span>
+                                </span>
+                                <span class="nav-link-text ps-1">Clientes</span>
+                            </div>
+                        </a>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+            {% if request.session.permission %}
+                {% for i in request.session.permission %}
+                    {% if i == "Administrativo" or i == "Todos" or i == 'Creador' %}
                         <a class="nav-link" href="{% url 'Register_Purchase' %}" >
                             <div class="d-flex align-items-center">
                                 <span class="nav-link-icon">
@@ -145,7 +151,6 @@
                                 <span class="nav-link-text ps-1">Empleados</span>
                             </div>
                         </a>
-                        
                     {% endif %}
                 {% endfor %}
             {% endif %}
@@ -190,14 +195,16 @@
                     <span class="nav-link-text ps-1">Inbox</span>
                 </div>
             </a>
-            <a class="nav-link" href="javascript:void(0);" >
-                <div class="d-flex align-items-center">
-                    <span class="nav-link-icon">
-                        <span class="fab fa-reddit-alien"></span>
-                    </span>
-                    <span class="nav-link-text ps-1">Chat</span>
-                </div>
-            </a>
+            {% if 1 == 5 %}
+                <a class="nav-link" href="javascript:void(0);" >
+                    <div class="d-flex align-items-center">
+                        <span class="nav-link-icon">
+                            <span class="fab fa-reddit-alien"></span>
+                        </span>
+                        <span class="nav-link-text ps-1">Chat</span>
+                    </div>
+                </a>
+            {% endif %}
         </li>
         {% if request.session.permission %}
             {% for i in request.session.permission %}
@@ -209,7 +216,7 @@
                               <hr class="mb-0 navbar-vertical-divider" />
                             </div>
                         </div>
-                        <a class="nav-link" href="javascript:void(0);" >
+                        <a class="nav-link" href="{% url 'Settings' %}" >
                             <div class="d-flex align-items-center">
                                 <span class="nav-link-icon">
                                     <span class="fas fa-cog"></span>

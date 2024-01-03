@@ -140,12 +140,31 @@
 {% block script %}
 
   <script>
-
+    preferens_columm = 0
     $(document).ready(function(){
       var list_product = null;
       var obj = null;
       var products = [];
-      var product
+      var product = null
+      var exist_invoice = true
+
+      document.addEventListener('keydown', function(event) {
+        if (event.altKey && event.key.toLowerCase() === 'f') {
+          $(".register_shopping").click()
+        }
+        if (event.altKey && event.key.toLowerCase() === 'z') {
+          $(".list_supplier").focus()
+          $(".list_supplier").click()
+        }
+        if (event.altKey && event.key.toLowerCase() === 'x') {
+          $(".paymentform").focus()
+          $(".paymentform").click()
+        }
+        if (event.altKey && event.key.toLowerCase() === 'c') {
+          $(".list_product").focus()
+          $(".list_product").click()
+        }
+      })
 
       $(".date_invoice").val(new Date().toISOString().split('T')[0]);
       $(".date_invoice_due").val(new Date().toISOString().split('T')[0]);
@@ -180,7 +199,7 @@
         value_quantity = $('.quantity').val()
         if(code == 13){
           if(value_quantity !== ""){
-            product = products.filter(producto => parseInt(producto.code) === parseInt(obj['code']))
+            product = products.filter(producto => producto.code === obj['code'])
             if(product.length > 0){
               console.log(value_quantity)
               UpdateExistingProduct(product[0],value_quantity)
@@ -236,22 +255,28 @@
 
       $(".register_shopping").click(function(){
         items = JSON.stringify(products, null, 2)
-        $.ajax({
-          url:"{% url 'Save_Shopping' %}",
-          method: "POST",
-          data:{csrfmiddlewaretoken: '{{ csrf_token }}','items':items, 'headers':Headers()},
-          success: function(e){
-            e = JSON.parse(e)
-            if(!e.result){
-              noti_person('ERROR', e.message)
+        if(!exist_invoice){
+          $.ajax({
+            url:"{% url 'Save_Shopping' %}",
+            method: "POST",
+            data:{csrfmiddlewaretoken: '{{ csrf_token }}','items':items, 'headers':Headers()},
+            success: function(e){
+              e = JSON.parse(e)
+              console.log(e)
+              if(!e.result){
+                noti_person('ERROR', e.message)
+              }
+              else{
+               noti_person('Tarea Finalizada', "Factura de compra registrada con éxito")
+               location.reload(true) 
+              }
             }
-            else{
-             noti_person('Tarea Finalizada', "Factura de compra registrada con éxito")
-             location.reload(true) 
-            }
-          }
-        })
-
+          })
+        }
+        else{
+          noti_person('ERROR', "Debe agregar un numero de factura de compra")
+          $.notify("Debe agregar un numero de factura de compra",'ERROR')
+        }
       })
 
 
@@ -261,9 +286,14 @@
           data: {'number': $(this).val()},
           success: function(e) {
             e = JSON.parse(e)
+            console.log(e)
             if(!e.result){
+              exist_invoice = false
               $.notify(e.message,'ERROR')
               noti_person('ERROR', e.message)
+            }
+            else{
+              $.notify("Este numero de factura ya fue registrado",'ERROR')
             }
           }
         })
@@ -306,7 +336,6 @@
 
 
       function UpdateExistingProduct(product, newQuantity) {
-        // Buscar la fila existente con la clase correspondiente
         const existingRow = $(`.row_product td.${product.code}`).closest("tr");
         if (existingRow.length > 0) {
           const quantityCell = existingRow.find(".text-center");

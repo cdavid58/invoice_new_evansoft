@@ -20,6 +20,10 @@ def LogOut(request):
 		return HttpResponse(json.dumps({'result':True}))
 
 
+def Query_Permissions(request):
+	if request.is_ajax():
+		return HttpResponse(AuthenticationUser(request).Query_Permissions())
+
 
 def List_Employee(request):
 	data = AuthenticationUser(request).Get_List_User()

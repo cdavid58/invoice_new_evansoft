@@ -13,46 +13,49 @@
       <div class="col-md-3 mb-3 col-12">
         <h4>Lista de Producto</h4>
       </div>
-      <div class="col-md-7 col-12 ml-auto">
+      <div class="col-md-2 col-12 ml-auto">
         {% for i in request.session.permission %}
           {% if i == "Creador" or i == "Todos" %}
-            <button class="btn btn-primary add_customer col-md-3 col-12 mb-3">Crear Cliente</button>
+            <button class="btn btn-primary add_customer">Crear Cliente</button>
           {% endif %}
         {% endfor %}   
       </div>
     </div>
   </div>
 </div>
-<input type="text" id="searchInput" placeholder="Buscar producto..."  autofocus class="form-control form-control-sm mb-2 searchInput">
 
 <div class="card" data-date="{{ i.registration_date }}">
   <div class="card-body p-2 overflow-hidden">
     <div class="table-responsive">
-      <table class="table">
+      <table class="table" id="example" style="width:100%">
         <thead>
           <tr>
+            <th class="text-dark w-100 text-center fs-0">Información</th>
             <th class="text-dark fs-0">CC / NIT</th>
             <th class="text-dark">Razón Social</th>
             <th class="text-dark">Teléfono</th>
             <th class="text-dark">Dirección</th>
             <th class="text-dark">E-Mail</th>
-            {% if request.session.permission %}
-              {% for j in request.session.permission %}
-                {% if j == "Editor" or j == "Todos" or j == "Eliminador"%}
-                  <th class="text-dark">Acciones</th>
-                {% endif %}
-              {% endfor %}
-            {% endif %}
+            <th class="text-dark">
+              {% if request.session.permission %}
+                {% for j in request.session.permission %}
+                  {% if j == "Editor" or j == "Todos" or j == "Eliminador"%}
+                    Acciones
+                  {% endif %}
+                {% endfor %}
+              {% endif %}
+            </th>
           </tr>
         </thead>
         <tbody>
           {% for i in page_obj %}
             <tr>
-              <td class="cc_nit">{{i.identification_number}}</td>
-              <td class="razon_social">{{i.name}}</td>
-              <td>{{i.phone}}</td>
-              <td>{{i.address|truncatechars:20}}</td>
-              <td>{{i.email|truncatechars:20}}</td>
+              <td class="details text-center">Ver más de {{i.name}}</td>
+              <td class="text-dark">{{i.identification_number}}</td>
+              <td class="text-dark">{{i.name}}</td>
+              <td class="text-dark">{{i.phone}}</td>
+              <td class="text-dark">{{i.address|truncatechars:20}}</td>
+              <td class="text-dark">{{i.email|truncatechars:20}}</td>
               <td>
                 {% for j in request.session.permission %}
                   {% if j == "Editor" or j == "Todos" %}
@@ -71,51 +74,26 @@
   </div>
 </div>
 
-{% if page_obj.has_other_pages %}
-  <div class="card-footer border-top d-flex justify-content-center">
-      {% if page_obj.has_previous %}
-        <a class="btn btn-falcon-default btn-sm me-2" href="?page=1" data-bs-toggle="tooltip" data-bs-placement="top" title="First">
-            <span class="fas fa-chevron-left"></span>
-        </a>
-      {% endif %}
-      {% for num in page_range %}
-        {% if page_obj.number == num %}
-          <a class="btn btn-sm btn-falcon-default me-2 active">{{ num }}</a>
-        {% else %}
-          <a class="btn btn-sm btn-falcon-default me-2" href="?page={{ num }}">{{ num }}</a>
-        {% endif %}
-      {% endfor %}
-      {% if page_obj.has_next %}
-        <a class="btn btn-falcon-default btn-sm" href="?page={{ page_obj.paginator.num_pages }}" data-bs-toggle="tooltip" data-bs-placement="top" title="Last">
-            <span class="fas fa-chevron-right"></span>
-        </a>
-      {% endif %}
-  </div>
-{% endif %}
-
 {% endblock %}
 {% block script %}
 
   <script>
+    function format(data) {
+      return `
+          <div>CC / NIT: ${data[1]}</div>
+          <div>Razón Social: ${data[2]}</div>
+          <div>Teléfono: ${data[3]}</div>
+          <div>Dirección: ${data[4]}</div>
+          <div>E-Mail: ${data[5]}</div>
+          <div>${data[6]}</div>
+        `
+    }
+
+    preferens_columm = 5;
+
     $(document).ready(function(){
 
       console.clear()
-
-      $(".searchInput").on("input", function() {
-        var searchText = $(this).val().toLowerCase();
-        $("table tbody tr").each(function() {
-          var ccNitText = $(this).find(".cc_nit").text().toLowerCase();
-          var razonSocialText = $(this).find(".razon_social").text().toLowerCase();
-          if (ccNitText.includes(searchText) || razonSocialText.includes(searchText)) {
-            $(this).show();
-          } else {
-            $(this).hide();
-          }
-        });
-      });
-
-
-
 
       $('.add_customer').click(function(){
         location.href = "{% url 'Create_Customer' %}"

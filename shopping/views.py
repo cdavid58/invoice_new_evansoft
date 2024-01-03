@@ -19,9 +19,10 @@ def Save_Shopping(request):
 		_data = request.POST
 		data = json.loads(_data['headers'])
 		data['details'] = json.loads(_data['items'])
+		print(data)
 		data['payment_form'] = {
-			"pk_paymentform": 1 if json.loads(_data['headers'])['pk_paymentform'] == 1 else 2,
-			"pk_paymentmethod":10 if json.loads(_data['headers'])['pk_paymentform'] == 1 else 30,
+			"pk_paymentform": 1 if int(data['pk_paymentform']) == 1 else 2,
+			"pk_paymentmethod":10 if int(data['pk_paymentform']) == 1 else 30,
 			"payment_due_date": json.loads(_data['headers'])['payment_due_date']
 		}
 		return HttpResponse(Shopping(request).Save_Shopping(data))

@@ -57,6 +57,10 @@
 				  <label class="form-label" for="exampleFormControlInput1">Recuperar Cuentas</label>
 				  <input class="form-control recovery_invoice" type="button" value="Recuperar Cuenta" />
 				</div>
+				<div class="mb-3 col-md-2  col-12">
+					<label for="organizerMultiple">Cuentas Congeladas</label>
+					<input class="form-control text-right account_p" name="waiter" type="number" disabled />
+				</div>
 			</div>
 		</div>
 	</div>
@@ -258,6 +262,7 @@
 			    local.push(JSON.parse(value));
 			  }
 			}
+			$(".account_p").val(local.length)
 			$('.row_product_local').empty()
 		  for(j = 0; j < local.length; j++){
 		  	e = local[j]
@@ -271,11 +276,38 @@
 			}
 		}
 
-		recovery_invoice_saved()		
-
 		$(document).ready(function () {
-
+			recovery_invoice_saved()
 			$(".product").click()
+
+			document.addEventListener('keydown', function(event) {
+	      if (event.altKey && event.key.toLowerCase() === 'c') {
+			    $(".client").focus()
+			    $(".client").click()
+			  }
+			  else if (event.altKey && event.key.toLowerCase() === 'p') {
+			    $(".product").focus()
+			    $(".product").click()
+			  }
+			  else if (event.altKey && event.key.toLowerCase() === 'r') {
+			    $(".referens").focus()
+			  }
+			  else if (event.altKey && event.key.toLowerCase() === 'g') {
+			    $(".save_account").click()
+			  }
+			  else if (event.altKey && event.key.toLowerCase() === 'f') {
+			    $(".save_invoice_billing").click()
+			  }
+			  else if (event.altKey && event.key.toLowerCase() === 'q') {
+			    $(".quantity").focus()
+			  }
+			  else if (event.altKey && event.key.toLowerCase() === 'b') {
+			    $(".quantity").focus()
+			  }
+			  else if (event.altKey && event.key.toLowerCase() === 'x') {
+			  	$(".recovery_invoice").click()
+			  }
+	    })
 
 
 			
@@ -530,12 +562,12 @@
           	impoconsumo += parseFloat($(celdas[7]).text()) * _quantity
           	impuestos += parseFloat($(celdas[5]).text()) * _quantity
         }
-        $(".subtotal").text(Math.round(subtotal_row_table_invoice))
-        $(".ico").text(Math.round(impoconsumo))
-        $('.impuestos').text(Math.round(impuestos))
+        $(".subtotal").text(subtotal_row_table_invoice.toFixed(2))
+        $(".ico").text(impoconsumo.toFixed(2))
+        $('.impuestos').text(impuestos.toFixed(2))
         $('.descuento').val(0)
         let total = impoconsumo + subtotal_row_table_invoice + impuestos
-        $(".total_invoice").text(Math.round(total))
+        $(".total_invoice").text(total.toFixed(2))
         $(".quantity").val('')
         $(".total_product").val(total);
 		}
@@ -551,11 +583,12 @@
 			_price = (price === 'price_1') ? product[price] - product['ipo'] : product[price]
 			return _price - (_price / (1 + ( parseInt(product['tax']) / 100 )))
 		}
+		discount = null
 
 		function CalculateBaseWithDiscount(product){
 			type_price = parseInt($(".price").val()) - 1 
 			price = (type_price == 0) ? SelectPrice(type_price)  :  SelectPrice(type_price)
-			_price =(price === 'price_1') ? product[price] - product['ipo'] : product[price]
+			_price = (price === 'price_1') ? product[price] - product['ipo'] : product[price]
 			tax = CalculateTaxValue(product)
 			base = _price - tax
 			discount = base * (product['discount'] / 100)
@@ -580,7 +613,7 @@
 		            <td class="text-center">${quantity}</td>
 		            <td>${base_g.toFixed(2)}</td>
 		            <td>${tax.toFixed(2)}</td>
-		            <td>${$('.discount').val()}</td>
+		            <td>${discount.toFixed(2)}</td>
 		            <td>${product['ipo']}</td>
 		            <td>${totalValue.toFixed(2)}</td>
 		        </tr>
