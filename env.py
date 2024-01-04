@@ -87,8 +87,10 @@ GET_BRANCH = f"{URL_IN_USE}/company/Get_Branch/"
 GET_RESOLUTION_LIST = f"{URL_IN_USE}/company/Get_Resolution_List/"
 
 
+#EMAIL
 
-
+GET_LIST_EMAILS = f"{URL_IN_USE}/emails/Get_List_Emails/"
+GET_LIST_EMAIL_SENDER = f"{URL_IN_USE}/emails/Get_List_Email_Sender/"
 
 
 

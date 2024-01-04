@@ -268,3 +268,29 @@ class Customer:
 	def Delete_Client(self):
 		response = requests.request("DELETE", env.DELETE_CLIENT, headers=self.headers, data=json.dumps({"pk_customer": self.request.GET['pk_customer']}))
 		return json.dumps(json.loads(response.text))
+
+
+class Email:
+	def __init__(self,request):
+		self.headers = {'Content-Type': 'application/json'}
+		self.request = request
+
+	def Get_List_Emals(self):
+		response = requests.request("GET", env.GET_LIST_EMAILS, headers=self.headers, data=json.dumps({"pk_employee": self.request.session['pk_employee']}))
+		return json.loads(response.text)['data']
+
+	def Get_List_Email_Sender(self):
+		response = requests.request("GET", env.GET_LIST_EMAIL_SENDER, headers=self.headers, data=json.dumps({"pk_employee": self.request.session['pk_employee']}))
+		return json.loads(response.text)['data']
+
+
+
+
+
+
+
+
+
+
+
+

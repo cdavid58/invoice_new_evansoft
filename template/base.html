@@ -175,18 +175,21 @@
     
     <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script> -->
     <!-- <script src="{% static 'jquery-3.3.1.min.js' %}"></script> -->
-    <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <!-- <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.5.1.js"></script> -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script lang="javascript" src="https://cdn.sheetjs.com/xlsx-0.20.0/package/dist/xlsx.full.min.js"></script>
     <script src="{% static 'vendors/popper/popper.min.js' %}"></script>
     <script src="{% static 'vendors/bootstrap/bootstrap.min.js' %}"></script>
     <script src="{% static 'vendors/anchorjs/anchor.min.js' %}"></script>
     <script src="{% static 'vendors/is/is.min.js' %}"></script>
+    <script src="{% static 'vendors/tinymce/tinymce.min.js' %}"></script>
     <script src="{% static 'vendors/swiper/swiper-bundle.min.js' %}"></script>
     <script src="{% static 'vendors/echarts/echarts.min.js' %}"></script>
-    <script src="{% static 'vendors/tinymce/tinymce.min.js' %}"></script>
     <script src="{% static 'vendors/fontawesome/all.min.js' %}"></script>
     <script src="{% static 'vendors/lodash/lodash.min.js' %}"></script>
     <script src="https://polyfill.io/v3/polyfill.min.js?features=window.scroll"></script>
+    <script src="{% static 'vendors/list.js/list.min.js' %}"></script>
     <script src="{% static 'assets/js/theme.js' %}"></script>
     <script src="{% static 'notify.js' %}"></script>
     <script src="{% static 'vendors/dropzone/dropzone.min.js' %}"></script>
@@ -345,6 +348,12 @@
 
       $(document).ready(function(){
         console.clear()
+
+        tinymce.init({
+          selector: '.tinymce',
+        });
+
+
         setInterval(function() {
           Query_Permission()
         }, 5000);
