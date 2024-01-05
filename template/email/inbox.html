@@ -43,7 +43,7 @@
             <div class="col-md-6 col-xl-3 col-xxl-2 ps-md-0 mb-1 mb-md-0">
               <div class="d-flex position-relative">
                 <div class="flex-1 ms-2">
-                  <a class=" {% if not i.fields.is_read_email %}fw-bold{% endif %} stretched-link inbox-link" href="../../app/email/email-detail.html">{{i.sender.name}}</a>
+                  <a class=" {% if not i.fields.is_read_email %}fw-bold{% endif %} stretched-link inbox-link" href="{% url 'Details_Email' i.pk %}">{{i.sender.name}}</a>
                   {% if not i.fields.is_read_email %}
                     <span class="badge badge-soft-success badge-pill ms-2">NEW</span>
                   {% endif %}

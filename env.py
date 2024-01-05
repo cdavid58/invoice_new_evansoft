@@ -29,6 +29,7 @@ DELETE_USER = f"{URL_IN_USE}/user/Delete_User/"
 UPDATE_USER = f"{URL_IN_USE}/user/Update_User/"
 GET_LIST_EMPLOYEE = f"{URL_IN_USE}/user/Get_List_Employee/"
 QUERY_PERMISSIONS = f"{URL_IN_USE}/user/Query_Permissions/"
+GET_LIST_EMAIL = f"{URL_IN_USE}/user/Get_List_Email/"
 
 #INVENTORY
 
@@ -91,6 +92,8 @@ GET_RESOLUTION_LIST = f"{URL_IN_USE}/company/Get_Resolution_List/"
 
 GET_LIST_EMAILS = f"{URL_IN_USE}/emails/Get_List_Emails/"
 GET_LIST_EMAIL_SENDER = f"{URL_IN_USE}/emails/Get_List_Email_Sender/"
+CREATE_EMAIL = f"{URL_IN_USE}/emails/Create_Email/"
+GET_EMAIL = f"{URL_IN_USE}/emails/Get_Email/"
 
 
 

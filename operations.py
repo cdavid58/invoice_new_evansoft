@@ -61,6 +61,10 @@ class AuthenticationUser:
 		response = requests.request("DELETE", env.DELETE_USER, headers = self.headers, data=json.dumps(data))
 		return json.dumps(json.loads(response.text))
 
+	def Get_List_Email(self):
+		response = requests.request("GET", env.GET_LIST_EMAIL, headers = self.headers, data=json.dumps({'pk_employee': self.request.session['pk_employee'], "pk_branch":self.request.session['pk_branch']}))
+		return json.loads(response.text)
+
 class Supplier:
 	def __init__(self,request):
 		self.headers = {'Content-Type': 'application/json'}
@@ -282,6 +286,15 @@ class Email:
 	def Get_List_Email_Sender(self):
 		response = requests.request("GET", env.GET_LIST_EMAIL_SENDER, headers=self.headers, data=json.dumps({"pk_employee": self.request.session['pk_employee']}))
 		return json.loads(response.text)['data']
+
+	def Create_Email(self,data):
+		response = requests.request("POST", env.CREATE_EMAIL, headers=self.headers, data=json.dumps(data))
+		print(json.loads(response.text))
+		return json.loads(response.text)
+
+	def Get_Email(self,pk):
+		response = requests.request("GET", env.GET_EMAIL, headers=self.headers, data=json.dumps({"pk_email": pk}))
+		return json.loads(response.text)
 
 
 
